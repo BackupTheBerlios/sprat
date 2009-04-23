@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.2 2009/04/23 19:05:21 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.3 2009/04/23 21:25:25 mahanja Exp $
 
 package com;
 
@@ -21,9 +21,11 @@ import object.Position;
 import tool.Console;
 
 import lejos.nxt.Button;
+import lejos.nxt.Motor;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
+import lejos.nxt.remote.RemoteNXT;
 
 
 /**
@@ -145,35 +147,28 @@ public class Communicator extends Thread {
 		// connect to the other robot
 		RemoteDevice other = null;
 		while ((other = Bluetooth.getKnownDevice(othersName)) == null)
-			//Console.print(".");
+			Console.print(".");
 		
 		if (other != null) {
 			conn = Bluetooth.connect(other);
 			conn.setIOMode(NXTConnection.PACKET);
 		} else {
+	    	Console.println("E: conn");
 			throw new Exception(ERR_OTHER_ROBOT_NOT_IN_RANGE);
 		}
 		
 		// open an input and an output stream to the other robot
-		dos = null;
-		while (dos ==null) {
-			try {
-				dos = conn.openDataOutputStream();
-			} catch(Exception e) {
-				Console.println("E:dos conn");
-				Button.ESCAPE.waitForPressAndRelease();
-			}
-		}
-		
-		dis = null;
-		while (dis ==null) {
-			try {
-				dis = conn.openDataInputStream();
-			} catch(Exception e) {
-				Console.println("E:dis conn");
-				Button.ESCAPE.waitForPressAndRelease();
-			}
-		}
+		dos = conn.openDataOutputStream();
+	    if (dos == null) {
+	    	Console.println("E: dos conn");
+			throw new Exception(ERROR_UNABLE_TO_OPEN_OUTPUT_STREAM);
+	    }
+
+		dis = conn.openDataInputStream();
+	    if (dis == null) {
+	    	Console.println("E: dis conn");
+			throw new Exception(ERROR_UNABLE_TO_OPEN_INPUT_STREAM);
+	    }
 		
 		// start listening
 		this.start();
@@ -184,19 +179,21 @@ public class Communicator extends Thread {
 	// and starts listener thread
 	private void initSlave() throws Exception {
 		// wait for the connection from the master
-		//Console.println("waiting for conn..");
+		Console.println("wait for conn..");
 		BTConnection connection = Bluetooth.waitForConnection();
 		//Console.print(".ok");
 
 		// open streams
 		dis = connection.openDataInputStream();
 	    if (dis == null) {
-	    	System.exit(1);
+	    	Console.println("E: dis conn");
+			throw new Exception(ERROR_UNABLE_TO_OPEN_INPUT_STREAM);
 	    }
 
 		dos = connection.openDataOutputStream();
 	    if (dos == null) {
-	    	System.exit(1);
+	    	Console.println("E: dos conn");
+			throw new Exception(ERROR_UNABLE_TO_OPEN_OUTPUT_STREAM);
 	    }
 	    //Console.println("S ready, start");
 
@@ -253,8 +250,8 @@ public class Communicator extends Thread {
 	
 	/**
 	 * Sends a demand for help with the information the other robot needs to come and help
-	 * @param pos
-	 * @param direction
+	 * @param pos the position where this one needs the other to help
+	 * @param direction the direction the other robot needs to help
 	 * @throws Exception 
 	 */
 	public void sendDemandHelp(Position pos, Direction direction) throws Exception {
@@ -267,6 +264,18 @@ public class Communicator extends Thread {
     	dos.flush();
     	//Console.println(msg +" send");
 	}
+	
+	/* *
+	 * Returning a reference to a remote controlled robot with the given name
+	 * @param othersName The name of the robot to take control
+	 * @return a reference to the remote controlled robot
+	 * @throws Exception
+	 * /
+	public RemoteNXT takeControll(String othersName) throws Exception {
+		 conn.close();
+		 RemoteNXT nxt = new RemoteNXT(othersName);
+		 return nxt;
+	}*/
 
 	///////////////////////////////////////////////////////
 	//                                                   //
@@ -329,12 +338,43 @@ public class Communicator extends Thread {
 		try {
 			com.sendMessage("HALLO "+def.Definitions.getInstance().othersName);
 		} catch (Exception e) {
-			Console.println("E: send com failed");
+			Console.println("E: send failed");
 			try {
 				Button.ESCAPE.waitForPressAndRelease();
 			} catch (InterruptedException ie) {}
 			System.exit(1);
 		}
+		/*
+		// taking remote control over the others port A motor
+		Console.println("REMOTE as "+Definitions.getInstance().myName);
+		
+		if (Definitions.getInstance().myName.equals(Definitions.MASTER)) {
+			RemoteNXT remote = null;
+			try {
+				remote= com.takeControll(Definitions.getInstance().othersName);
+			} catch (Exception e) {
+				Console.println("E: remote failed");
+				try {
+					Button.ESCAPE.waitForPressAndRelease();
+				} catch (InterruptedException ie) {}
+				System.exit(1);
+			}
+
+			Console.println("controlling");
+			
+			while(!Button.ESCAPE.isPressed()) {
+				remote.A.rotate(Motor.A.getTachoCount());
+			}
+		} else {
+			Console.println("being controlled");
+			try {
+				Button.ESCAPE.waitForPressAndRelease();
+			} catch (InterruptedException ie) {}
+			System.exit(1);
+		}*/
+		
+		// exiting
+		Console.println("EXIT");
 		try {
 			Button.ESCAPE.waitForPressAndRelease();
 		} catch (InterruptedException ie) {}
@@ -344,6 +384,9 @@ public class Communicator extends Thread {
 
 /*
  * $Log: Communicator.java,v $
+ * Revision 1.3  2009/04/23 21:25:25  mahanja
+ * Connection bug fixed (don't know exactly what it was)
+ *
  * Revision 1.2  2009/04/23 19:05:21  mahanja
  * Functional and tested!
  * To use the main method you have to give a name  "Definitions.initInstance(Definitions.CONSTANT_TO_BE_SET);" ).
