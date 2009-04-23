@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.3 2009/04/23 14:39:41 stollf06 Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.4 2009/04/23 19:00:07 mahanja Exp $
 
 package def;
 
@@ -11,11 +11,11 @@ import sun.security.jca.GetInstance.Instance;
 /**
  * TODO: DESCRIPTION
  * 
- * @author $Author: stollf06 $
+ * @author $Author: mahanja $
  */
 public class  Definitions {
-	public static final String MASTER = "master";
-	public static final String SLAVE = "slave";
+	public static final String MASTER = "NXT";
+	public static final String SLAVE = "SLAVE";
 	
 	public static final LightSensor ls = new LightSensor(SensorPort.S1);
 	public static final float junctionSize = 5.9f;//give value in cm
@@ -29,6 +29,8 @@ public class  Definitions {
 	public static boolean wayFinderOn = true; //TODO delete the concerning code in Motion.isThereAWay()
 	
 	public String myName = "UNDEFINED"; // Must be defined before starting the AI!
+	public String othersName = "UNDEFINED"; // Must be defined before starting the AI!
+
 	public static final TachoNavigator  pilot = new TachoNavigator (5.5f, 12.5f, Motor.A, Motor.B,false);//TODO
 	public static BrightnessRange colWhiteGround;
 	public static BrightnessRange colLine;
@@ -45,9 +47,9 @@ public class  Definitions {
 	public static final String[] calibOtherRobotObject = {"put the light sensor", "on the other robots Object", "then press enter to", "start the calibration"}; 
 	
 	public static final String[] calibCommonObject = {"put the light sensor", "on the common object", "then press enter to", "start the calibration"}; 
+
 	
 	private static Definitions instance = null;
-	
 	
 	public static Definitions getInstance() {
 		return instance;
@@ -59,14 +61,20 @@ public class  Definitions {
 	
 	public Definitions(String name) {
 		myName = name;
-		
-		// TODO: Das vo Floh!!!
+		if (myName.equals(MASTER)) {
+			othersName = SLAVE;
+		} else {
+			othersName = MASTER;
+		}
 	}
-	
 }
 
 /*
  * $Log: Definitions.java,v $
+ * Revision 1.4  2009/04/23 19:00:07  mahanja
+ * The names are uppercase.
+ * The name of the other robot will be found out at init.
+ *
  * Revision 1.3  2009/04/23 14:39:41  stollf06
  * first upload of calibration and motion classes
  *
