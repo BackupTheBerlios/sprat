@@ -1,7 +1,8 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/DiscoveredJunctionMessage.java,v 1.1 2009/04/23 12:08:34 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/DiscoveredJunctionMessage.java,v 1.2 2009/04/23 19:03:08 mahanja Exp $
 
 package com.msg;
 
+import object.Junction;
 import object.Position;
 import com.Communicator;
 
@@ -12,41 +13,39 @@ import com.Communicator;
  */
 public class DiscoveredJunctionMessage {
 
-		private Position pos;
-		private int type;
+		private Junction junction;
 		
-		public DiscoveredJunctionMessage(int type, Position pos) {
-			this.type = type;
-			this.pos = pos;
+		public DiscoveredJunctionMessage(Junction junction) {
+			this.junction = junction;
 		}
 		
-		public void setPosition(Position pos) {
-			this.pos = pos;
+		public void setPosition(Junction junction) {
+			this.junction = junction;
 		}
 		
-		public Position getPosition() {
-			return pos;
-		}
-
-		public void setType(int tpye) {
-			this.type = type;
-		}
-		
-		public int getType() {
-			return type;
+		public Junction getJunction() {
+			return junction;
 		}
 		
 		/**
-		 * The format is "1:x;y", where x and y will be replaced by their appropriate values.
+		 * The format is "2:t;x;y", where t, x and y will be replaced by their appropriate values.
+		 * t = type of the junction (one of object.Junction. types)
+		 * x, y = coordinates of object.Position
 		 * @return the String to be send over bluetooth
 		 */
 		public String getMessageString() {
-			return Communicator.MSGTYPE_NEXTPOS + ":" + pos.getX() + ";" + pos.getY();
+			return Communicator.MSGTYPE_JUNCTION + ":" + 
+				junction.getType() + ";" + 
+				junction.getPosition().getX() + ";" + 
+				junction.getPosition().getY();
 		}
 }
 
 /*
  * $Log: DiscoveredJunctionMessage.java,v $
+ * Revision 1.2  2009/04/23 19:03:08  mahanja
+ * position and type together are a junction
+ *
  * Revision 1.1  2009/04/23 12:08:34  mahanja
  * First check in. This code isn't tested yet!
  *
