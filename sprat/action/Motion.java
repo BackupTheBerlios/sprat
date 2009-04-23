@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.1 2009/04/23 14:48:02 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.2 2009/04/23 21:22:00 mahanja Exp $
 
 package action;
 
@@ -120,4 +120,10 @@ public class Motion {
 
 	}
 
+	/*
+	 * $Log: Motion.java,v $
+	 * Revision 1.2  2009/04/23 21:22:00  mahanja
+	 * added the log cvs keyword
+	 *
+	 */
 }
