@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.2 2009/04/23 13:39:22 stollf06 Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.3 2009/04/23 14:39:41 stollf06 Exp $
 
 package def;
 
@@ -13,7 +13,7 @@ import sun.security.jca.GetInstance.Instance;
  * 
  * @author $Author: stollf06 $
  */
-public class Definitions {
+public class  Definitions {
 	public static final String MASTER = "master";
 	public static final String SLAVE = "slave";
 	
@@ -36,7 +36,18 @@ public class Definitions {
 	public static BrightnessRange colOtherRobotObjects;
 	public static BrightnessRange colCommonObjects;
 	
+	public static final String[] calibWhitePaper = {"put the light sensor", "on the white surface", "then press enter to", "start the calibration"}; 
+
+	public static final String[] calibLine = {"put the light sensor", "on the line", "then press enter to", "start the calibration"}; 
+	
+	public static final String[] calibMyObject = {"put the light sensor", "on the my object", "then press enter to", "start the calibration"}; 
+	
+	public static final String[] calibOtherRobotObject = {"put the light sensor", "on the other robots Object", "then press enter to", "start the calibration"}; 
+	
+	public static final String[] calibCommonObject = {"put the light sensor", "on the common object", "then press enter to", "start the calibration"}; 
+	
 	private static Definitions instance = null;
+	
 	
 	public static Definitions getInstance() {
 		return instance;
@@ -56,6 +67,9 @@ public class Definitions {
 
 /*
  * $Log: Definitions.java,v $
+ * Revision 1.3  2009/04/23 14:39:41  stollf06
+ * first upload of calibration and motion classes
+ *
  * Revision 1.2  2009/04/23 13:39:22  stollf06
  * variables and constants for motion added
  *
