@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.5 2009/04/27 09:57:05 stollf06 Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.6 2009/04/27 19:53:55 stollf06 Exp $
 
 package def;
 
@@ -23,7 +23,7 @@ public class  Definitions {
 	public static final int leftJunctAngle = -90;
 	public static final int rightJunctAngle = 90;
 	public static final float corrTestAngle = 20.0f; //used to test the 
-	public static final float corrAngle = 2.0f; //used to correct the direction in case it goes of the line
+	public static final float corrAngle = 3.0f; //used to correct the direction in case it goes of the line
 	public static final int brightTolerance = 5; //used to give some comparitive tolerance
 	public static boolean wayFinderOn = true; //TODO delete the concerning code in Motion.isThereAWay()
 	
@@ -62,6 +62,7 @@ public class  Definitions {
 	}
 	
 	public Definitions(String name) {
+		
 		myName = name;
 		if (myName.equals(MASTER)) {
 			othersName = SLAVE;
@@ -73,6 +74,9 @@ public class  Definitions {
 
 /*
  * $Log: Definitions.java,v $
+ * Revision 1.6  2009/04/27 19:53:55  stollf06
+ * introduction of orientation on the grid
+ *
  * Revision 1.5  2009/04/27 09:57:05  stollf06
  * added masterJnctOffset and slaveJunctOffset
  *

@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Junction.java,v 1.1 2009/04/23 12:08:34 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Junction.java,v 1.2 2009/04/27 19:53:55 stollf06 Exp $
 
 package object;
 
@@ -8,7 +8,7 @@ import def.Definitions;
 /**
  * TODO: DESCRIPTION
  * 
- * @author $Author: mahanja $
+ * @author $Author: stollf06 $
  */
 public class Junction {
 	
@@ -19,6 +19,7 @@ public class Junction {
 	public static final int SLAVE_OBJ = 3;
 	public static final int COMMON_OBJ = 4;
 	public static final int OUTSIDE = 5;
+	public static final int HOME_BASE = 6;
 	public int MY_OBJ = -1; //this value is adapted at initialization
 	
 	private int type = UNKNOWN;
@@ -56,6 +57,9 @@ public class Junction {
 
 /*
  * $Log: Junction.java,v $
+ * Revision 1.2  2009/04/27 19:53:55  stollf06
+ * introduction of orientation on the grid
+ *
  * Revision 1.1  2009/04/23 12:08:34  mahanja
  * First check in. This code isn't tested yet!
  *

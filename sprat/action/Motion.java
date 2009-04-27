@@ -1,12 +1,19 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.3 2009/04/27 09:55:14 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.4 2009/04/27 19:53:55 stollf06 Exp $
 
 package action;
 
+import object.Direction;
+import object.Grid;
+import object.Junction;
+import object.Robot;
+import tool.Console;
 import def.Definitions;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
 public class Motion {
+	private Robot robo;
+	private Grid grid;
 
 	/**
 	 * @param args
@@ -14,8 +21,9 @@ public class Motion {
 	public static void main(String[] args) {
 	}
 
-	public Motion() {
-
+	public Motion(Robot robo, Grid grid) {
+		this.robo = robo;
+		this.grid = grid;
 	}
 
 	/**
@@ -32,6 +40,8 @@ public class Motion {
 			 * LCD.drawInt(Definitions.colLine.max, 11, 1); LCD.refresh();
 			 * Button.waitForPress(); LCD.clearDisplay();
 			 */
+			
+			//TODO, change that the not finding a path is also a step that is correct
 			int leftVal, rightVal;
 
 			// test if there is a line
@@ -72,17 +82,21 @@ public class Motion {
 		}
 	}
 
-	public boolean goToNextJunction() {
+	public boolean goToNextJunction(){
+		Button.waitForPress();
+		//reservate the path
+		robo.setMyNextJunction(grid.getNextProjectedJunction(robo));
+		Console.println("projected");
+		Button.waitForPress();
 		float distanceToGo = Definitions.distBtwnJunct
 				+ Definitions.junctionSize;
 		Definitions.pilot.travel(distanceToGo / 2);
 		if (!isThereAWay()) {
 			Definitions.pilot.travel(-distanceToGo / 2);
+			//change the path
+			robo.setMyNextJunction(robo.getMyActualJunction());
 			return false;
 		}
-
-		// Definitions.pilot.travel(Definitions.distBtwnJunct / 2);
-		// directionCorrection();
 		Definitions.pilot.travel(distanceToGo / 2);
 		return true;
 	}
@@ -97,7 +111,9 @@ public class Motion {
 	}
 
 	public void turn(boolean isLeft) {
+		robo.changeOrientation(isLeft);
 		Definitions.pilot.travel(Definitions.distBtwnLsWheel);
+		
 		if (isLeft) {
 			Definitions.pilot.rotate(Definitions.leftJunctAngle);
 		} else {
@@ -105,6 +121,7 @@ public class Motion {
 		}
 		Definitions.pilot.travel(-Definitions.distBtwnLsWheel);
 	}
+	
 
 	public void directionCorrection() {
 		Definitions.pilot.rotate(-Definitions.corrTestAngle);
@@ -136,14 +153,16 @@ public class Motion {
 			// lane is in the middle, turn back to origin
 			Definitions.pilot.rotate(-Definitions.corrTestAngle);
 		}
-
 	}
-
-	/*
-	 * $Log: Motion.java,v $
-	 * Revision 1.3  2009/04/27 09:55:14  stollf06
-	 * finished isThereAWay method and added commentaries
-	 * Revision 1.2 2009/04/23 21:22:00 mahanja added the
-	 * log cvs keyword
-	 */
+		
 }
+/*
+ * $Log: Motion.java,v $
+ * Revision 1.4  2009/04/27 19:53:55  stollf06
+ * introduction of orientation on the grid
+ *
+ * Revision 1.3  2009/04/27 09:55:14  stollf06
+ * finished isThereAWay method and added commentaries
+ * Revision 1.2 2009/04/23 21:22:00 mahanja added the
+ * log cvs keyword
+ */

@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.2 2009/04/27 09:57:58 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.3 2009/04/27 19:53:55 stollf06 Exp $
 
 package def;
 
@@ -15,7 +15,7 @@ public class Calibration {
 	}
 	
 	public Calibration(){
-		Definitions def = Definitions.getInstance();
+		//Definitions def = Definitions.getInstance();
 		BrightnessRange objBR;
 		//white paper
 		//setDisplay(def.calibWhitePaper);
@@ -25,7 +25,7 @@ public class Calibration {
 		//Definitions.colWhiteGround = objBR;
 		
 		//line
-		setDisplay(def.calibLine);
+		setDisplay(Definitions.calibLine);
 		objBR = setBrightRange();
 		objBR.max += Definitions.brightTolerance;
 		objBR.min -= Definitions.brightTolerance;
@@ -43,6 +43,17 @@ public class Calibration {
 		//commun object
 		//setDisplay(Definitions.calibCommonObject);
 		//Definitions.colCommonObjects = setBrightRange();
+		
+		
+		LCD.clear();
+		
+		LCD.drawString("line: ", 0, 1);
+		LCD.drawInt(Definitions.colLine.min, 7, 1);
+		LCD.drawInt(Definitions.colLine.max, 11, 1);
+		LCD.refresh();
+		Button.waitForPress();
+		LCD.clearDisplay();
+		
 	}
 	
 	public void setDisplay(String[] text){
@@ -92,6 +103,9 @@ public class Calibration {
 }
 /*
  * $Log: Calibration.java,v $
+ * Revision 1.3  2009/04/27 19:53:55  stollf06
+ * introduction of orientation on the grid
+ *
  * Revision 1.2  2009/04/27 09:57:58  stollf06
  * took out calibration of whitePaper (unnecessary)
  *

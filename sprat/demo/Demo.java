@@ -1,7 +1,9 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.2 2009/04/27 09:57:58 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.3 2009/04/27 19:53:55 stollf06 Exp $
 
 package demo;
 
+import object.Grid;
+import object.Robot;
 import action.Motion;
 import def.Calibration;
 import def.Definitions;
@@ -21,20 +23,23 @@ public class Demo {
 	}
 
 	//stupid running in circle
+	/*
 	public void twoStepSquare() {
 		Definitions.wayFinderOn=false;
-		Motion motion = new Motion();
+		//Motion motion = new Motion();
 		
 		for (int i = 0; i < 4; i++) {
 			motion.goNJunctions(2);
 			motion.turn(false);
 		}
-	}
+	}*/
 	
 	public void pathFinding(){
 		calibrationTest();
 		Definitions.wayFinderOn=true;
-		Motion motion = new Motion();
+		Grid grid = new Grid();
+		Robot robo = new Robot(grid);
+		Motion motion = new Motion(robo, grid);
 
 		
 		for (int i = 0; i < 4; i++) {
@@ -61,6 +66,9 @@ public class Demo {
 }
 /*
  * $Log: Demo.java,v $
+ * Revision 1.3  2009/04/27 19:53:55  stollf06
+ * introduction of orientation on the grid
+ *
  * Revision 1.2  2009/04/27 09:57:58  stollf06
  * took out calibration of whitePaper (unnecessary)
  *
