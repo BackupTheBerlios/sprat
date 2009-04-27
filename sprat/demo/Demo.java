@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.1 2009/04/23 14:48:15 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.2 2009/04/27 09:57:58 stollf06 Exp $
 
 package demo;
 
@@ -49,10 +49,6 @@ public class Demo {
 		Calibration calib = new Calibration();
 		LCD.clear();
 		
-		LCD.drawString("white:", 0, 0);
-		LCD.drawInt(Definitions.colWhiteGround.min, 7, 0);
-		LCD.drawInt(Definitions.colWhiteGround.max, 11, 0);
-		
 		LCD.drawString("line: ", 0, 1);
 		LCD.drawInt(Definitions.colLine.min, 7, 1);
 		LCD.drawInt(Definitions.colLine.max, 11, 1);
@@ -65,6 +61,9 @@ public class Demo {
 }
 /*
  * $Log: Demo.java,v $
+ * Revision 1.2  2009/04/27 09:57:58  stollf06
+ * took out calibration of whitePaper (unnecessary)
+ *
  * Revision 1.1  2009/04/23 14:48:15  stollf06
  * first upload
  *

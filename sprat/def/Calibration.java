@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.1 2009/04/23 14:47:39 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.2 2009/04/27 09:57:58 stollf06 Exp $
 
 package def;
 
@@ -18,11 +18,11 @@ public class Calibration {
 		Definitions def = Definitions.getInstance();
 		BrightnessRange objBR;
 		//white paper
-		setDisplay(def.calibWhitePaper);
-		objBR = setBrightRange();
-		objBR.max += Definitions.brightTolerance;
-		objBR.min -= Definitions.brightTolerance;
-		Definitions.colWhiteGround = objBR;
+		//setDisplay(def.calibWhitePaper);
+		//objBR = setBrightRange();
+		//objBR.max += Definitions.brightTolerance;
+		//objBR.min -= Definitions.brightTolerance;
+		//Definitions.colWhiteGround = objBR;
 		
 		//line
 		setDisplay(def.calibLine);
@@ -92,6 +92,9 @@ public class Calibration {
 }
 /*
  * $Log: Calibration.java,v $
+ * Revision 1.2  2009/04/27 09:57:58  stollf06
+ * took out calibration of whitePaper (unnecessary)
+ *
  * Revision 1.1  2009/04/23 14:47:39  stollf06
  * first upload
  *
