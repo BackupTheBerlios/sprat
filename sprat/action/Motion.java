@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.2 2009/04/23 21:22:00 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.3 2009/04/27 09:55:14 stollf06 Exp $
 
 package action;
 
@@ -20,7 +20,7 @@ public class Motion {
 
 	/**
 	 * 
-	 * @return
+	 * @returns true if a way was found
 	 */
 	public boolean isThereAWay() {
 		if (Definitions.wayFinderOn) {
@@ -34,28 +34,38 @@ public class Motion {
 			 */
 			int leftVal, rightVal;
 
+			// test if there is a line
 			if (Definitions.colLine.min <= measure
 					&& measure <= Definitions.colLine.max) {
 				directionCorrection();
-
 				return true;
 			} else {
+				// turn left for checking the brightness
 				Definitions.pilot.rotate(-Definitions.corrTestAngle);
 				leftVal = Definitions.ls.readNormalizedValue();
+				// test if there is a line on the left side
 				if (Definitions.colLine.min <= leftVal
 						&& leftVal <= Definitions.colLine.max) {
+					// continue path with a little correction
 					Definitions.pilot.rotate(Definitions.corrTestAngle
 							- Definitions.corrAngle);
 					return true;
 				} else {
+					// check on the right side for the line
 					Definitions.pilot.rotate(2 * Definitions.corrTestAngle);
 					rightVal = Definitions.ls.readNormalizedValue();
 					if (Definitions.colLine.min <= rightVal
 							&& rightVal <= Definitions.colLine.max) {
-						// TODO correction
+						// continue with a little correction to the right
+						Definitions.pilot
+								.rotate(-(Definitions.corrTestAngle + Definitions.corrAngle));
+						return true;
+					}else{
+						//no line found, go back to original position
+						Definitions.pilot.rotate(-Definitions.corrTestAngle);
+						return false;
 					}
 				}
-				return false;
 			}
 		} else {
 			return true;
@@ -102,19 +112,28 @@ public class Motion {
 		Definitions.pilot.rotate(2 * Definitions.corrTestAngle);
 		int rightVal = Definitions.ls.readNormalizedValue();
 		/*
-		 * TODO delet (debugging) LCD.clear(); LCD.drawString("left: ", 0, 0);
+		 * TODO delete (debugging) LCD.clear(); LCD.drawString("left: ", 0, 0);
 		 * LCD.drawInt(leftVal, 7, 0); LCD.drawString("right: ", 0, 1);
 		 * LCD.drawInt(rightVal, 7, 1); LCD.refresh(); Button.waitForPress();
 		 * LCD.clearDisplay();
 		 */
 		// TODO check closer
-		if (leftVal < rightVal - Definitions.brightTolerance) {
+		if (leftVal < rightVal - Definitions.brightTolerance) {// left is darker
+																// than right
+			// so line is on the left side-> make a correction
 			Definitions.pilot.rotate(-Definitions.corrTestAngle
 					- Definitions.corrAngle);
-		} else if (rightVal < leftVal - Definitions.brightTolerance) {
+		} else if (rightVal < leftVal - Definitions.brightTolerance) {// right
+																		// is
+																		// darker
+																		// than
+																		// the
+																		// left
+			// line is on the right side -> make a correction
 			Definitions.pilot.rotate(-Definitions.corrTestAngle
 					+ Definitions.corrAngle);
 		} else {
+			// lane is in the middle, turn back to origin
 			Definitions.pilot.rotate(-Definitions.corrTestAngle);
 		}
 
@@ -122,8 +141,9 @@ public class Motion {
 
 	/*
 	 * $Log: Motion.java,v $
-	 * Revision 1.2  2009/04/23 21:22:00  mahanja
-	 * added the log cvs keyword
-	 *
+	 * Revision 1.3  2009/04/27 09:55:14  stollf06
+	 * finished isThereAWay method and added commentaries
+	 * Revision 1.2 2009/04/23 21:22:00 mahanja added the
+	 * log cvs keyword
 	 */
 }
