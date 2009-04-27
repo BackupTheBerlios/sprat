@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.5 2009/04/27 20:03:52 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.6 2009/04/27 20:19:56 mahanja Exp $
 
 package com;
 
@@ -14,6 +14,7 @@ import com.msg.*;
 import def.Definitions;
 
 import object.Direction;
+import object.Grid;
 import object.Junction;
 import object.Position;
 import object.RemoteMove;
@@ -167,8 +168,11 @@ public class Communicator extends Thread {
 	}
 	
 	
-	// catches the connection from the master
-	// and starts listener thread
+	/**
+	 * Catches the connection from the master
+	 * and starts listener thread
+	 * @throws Exception
+	 */
 	private void initSlave() throws Exception {
 		// wait for the connection from the master
 		Console.println("wait for conn..");
@@ -187,7 +191,6 @@ public class Communicator extends Thread {
 	    	Console.println("E: dos conn");
 			throw new Exception(ERROR_UNABLE_TO_OPEN_OUTPUT_STREAM);
 	    }
-	    //Console.println("S ready, start");
 
 	    // start listening
 		this.start();
@@ -277,18 +280,6 @@ public class Communicator extends Thread {
 		sendMessage(msg.getMessageString() + ENDL);
 	}
 	
-	/* *
-	 * Returning a reference to a remote controlled robot with the given name
-	 * @param othersName The name of the robot to take control
-	 * @return a reference to the remote controlled robot
-	 * @throws Exception
-	 * /
-	public RemoteNXT takeControll(String othersName) throws Exception {
-		 conn.close();
-		 RemoteNXT nxt = new RemoteNXT(othersName);
-		 return nxt;
-	}*/
-
 	///////////////////////////////////////////////////////
 	//                                                   //
 	//                     RECEIVER                      //
@@ -325,7 +316,7 @@ public class Communicator extends Thread {
 		// data gets information...
 		Message m = null;
 		int type = Integer.parseInt(text.substring(0,0)); // ever only first char
-		int[] values = parseMessageBody(text.substring(2, text.length()-2)); // cuts of the terminating \n
+		int[] values = parseMessageBody(text.substring(2, text.length()-2)); // cuts of also the terminating \n
 		
 		switch (type) {
 		case Message.MSGTYPE_ACK: 
@@ -376,15 +367,19 @@ public class Communicator extends Thread {
 		for (int i = 0; i < v.size(); i++)
 			array[i] = ((Integer)(v.elementAt(i))).intValue();
 		
-		return new int[0];//array;
+		return array;
 	}
 	
-	private void processAcknowledgeMessage(Message m) {}
-	private void processNextPositionMessage(Message m) {}
-	private void processDiscoveredJunctionMessage(Message m) {}
-	private void processNeedHelpMessage(Message m) {}
-	private void processReadyToHelpMessage(Message m) {}
-	private void processRemoteMessage(Message m) {}
+	private void processAcknowledgeMessage(Message m) {/* TODO */}
+	private void processNextPositionMessage(Message m) {/* TODO */}
+	
+	private void processDiscoveredJunctionMessage(Message m) {
+		Grid.getInstance().setJunction(((DiscoveredJunctionMessage)m).getJunction());
+	}
+	
+	private void processNeedHelpMessage(Message m) {/* TODO */}
+	private void processReadyToHelpMessage(Message m) {/* TODO */}
+	private void processRemoteMessage(Message m) {/* TODO */}
 	
 	///////////////////////////////////////////////////////
 	//                                                   //
@@ -459,6 +454,9 @@ public class Communicator extends Thread {
 
 /*
  * $Log: Communicator.java,v $
+ * Revision 1.6  2009/04/27 20:19:56  mahanja
+ * implemented processDiscoveredJunctionMessage and fixed a very stupid bug!
+ *
  * Revision 1.5  2009/04/27 20:03:52  mahanja
  * Parsing message such as number higher than 9 are supported
  *
