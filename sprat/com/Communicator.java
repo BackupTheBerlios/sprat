@@ -1,9 +1,10 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.4 2009/04/27 08:48:14 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.5 2009/04/27 20:03:52 mahanja Exp $
 
 package com;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.util.Vector;
 
 import javax.bluetooth.LocalDevice;
 import javax.bluetooth.RemoteDevice;
@@ -322,32 +323,26 @@ public class Communicator extends Thread {
 		Console.println("r: "+ text);
 		
 		// data gets information...
-		int type = Integer.parseInt(text.charAt(0) + "");
 		Message m = null;
+		int type = Integer.parseInt(text.substring(0,0)); // ever only first char
+		int[] values = parseMessageBody(text.substring(2, text.length()-2)); // cuts of the terminating \n
 		
 		switch (type) {
 		case Message.MSGTYPE_ACK: 
-			m = new AcknowledgeMessage(Integer.parseInt(text.charAt(2)+""));
+			m = new AcknowledgeMessage(values[0]);
 			processAcknowledgeMessage(m);
 			break;
 		case Message.MSGTYPE_NEXTPOS: 
-			m = new NextPositionMessage(new Position(
-					Integer.parseInt(text.charAt(2)+""),
-					Integer.parseInt(text.charAt(4)+"")));
+			m = new NextPositionMessage(new Position(values[0], values[1]));
 			processNextPositionMessage(m);
 			break;
 		case Message.MSGTYPE_JUNCTION:
-			m = new DiscoveredJunctionMessage(new Junction(new Position(
-					Integer.parseInt(text.charAt(2)+""),
-					Integer.parseInt(text.charAt(4)+"")),
-					Integer.parseInt(text.charAt(6)+"")));
+			m = new DiscoveredJunctionMessage(
+				new Junction(new Position(values[0],values[1]),values[2]));
 			processDiscoveredJunctionMessage(m);
 			break;
 		case Message.MSGTYPE_NEEDHELP:
-			m = new NeedHelpMessage(new Position(
-					Integer.parseInt(text.charAt(2)+""),
-					Integer.parseInt(text.charAt(4)+"")), new Direction(
-					Integer.parseInt(text.charAt(4)+""))); 
+			m = new NeedHelpMessage(new Position(values[0], values[1]), new Direction(values[2])); 
 			processNeedHelpMessage(m);
 			break;
 		case Message.MSGTYPE_READYTOHELP:
@@ -355,11 +350,33 @@ public class Communicator extends Thread {
 			processReadyToHelpMessage(m);
 			break;
 		case Message.MSGTYPE_REMOTEMOVE:
-			m = new RemoteMessage(Integer.parseInt(text.charAt(2)+""));
+			m = new RemoteMessage(values[0]);
 			processRemoteMessage(m);
 			break;
-		default: Console.println("Emsg: "+text); break;
+		default: 
+			Console.println("Emsg: "+text); break;
 		}
+	}
+	
+	private int[] parseMessageBody(String body) {
+		String tmp = null;
+		Vector v = new Vector();
+		int idx;
+		
+		while(body.length() > 0) { // there is min 1 times ":" in body
+			idx = body.indexOf(";");
+			if (idx < 0)
+				idx = body.length()-1;
+			v.addElement(new Integer(Integer.parseInt(body.substring(0, idx-1))));
+			tmp = body.substring(idx);
+			body = tmp;
+		}
+		
+		int array[] = new int[v.size()];
+		for (int i = 0; i < v.size(); i++)
+			array[i] = ((Integer)(v.elementAt(i))).intValue();
+		
+		return new int[0];//array;
 	}
 	
 	private void processAcknowledgeMessage(Message m) {}
@@ -442,6 +459,9 @@ public class Communicator extends Thread {
 
 /*
  * $Log: Communicator.java,v $
+ * Revision 1.5  2009/04/27 20:03:52  mahanja
+ * Parsing message such as number higher than 9 are supported
+ *
  * Revision 1.4  2009/04/27 08:48:14  mahanja
  * Remote controll should work. All messages are parsed at the receiver (supports yet just a 10x10 grid)
  *
