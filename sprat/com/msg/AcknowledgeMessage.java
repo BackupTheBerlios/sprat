@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/AcknowledgeMessage.java,v 1.1 2009/04/23 19:01:27 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/AcknowledgeMessage.java,v 1.2 2009/04/27 08:48:14 mahanja Exp $
 
 package com.msg;
 
@@ -9,7 +9,7 @@ import com.Communicator;
  * 
  * @author $Author: mahanja $
  */
-public class AcknowledgeMessage {
+public class AcknowledgeMessage implements Message {
 	public static int NOT_OK = 0;
 	public static int OK = 1; 
 	
@@ -33,12 +33,15 @@ public class AcknowledgeMessage {
 	 * @return the String to be send over bluetooth
 	 */
 	public String getMessageString() {
-		return Communicator.MSGTYPE_ACK + ":" + ok;
+		return MSGTYPE_ACK + ":" + ok;
 	}
 }
 
 /*
  * $Log: AcknowledgeMessage.java,v $
+ * Revision 1.2  2009/04/27 08:48:14  mahanja
+ * Remote controll should work. All messages are parsed at the receiver (supports yet just a 10x10 grid)
+ *
  * Revision 1.1  2009/04/23 19:01:27  mahanja
  * A new message type
  *

@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.3 2009/04/23 21:25:25 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.4 2009/04/27 08:48:14 mahanja Exp $
 
 package com;
 
@@ -8,24 +8,20 @@ import java.io.DataOutputStream;
 import javax.bluetooth.LocalDevice;
 import javax.bluetooth.RemoteDevice;
 
-import com.msg.AcknowledgeMessage;
-import com.msg.DiscoveredJunctionMessage;
-import com.msg.NeedHelpMessage;
-import com.msg.NextPositionMessage;
+import com.msg.*;
 
 import def.Definitions;
 
 import object.Direction;
 import object.Junction;
 import object.Position;
+import object.RemoteMove;
 import tool.Console;
 
 import lejos.nxt.Button;
-import lejos.nxt.Motor;
 import lejos.nxt.comm.BTConnection;
 import lejos.nxt.comm.Bluetooth;
 import lejos.nxt.comm.NXTConnection;
-import lejos.nxt.remote.RemoteNXT;
 
 
 /**
@@ -59,11 +55,6 @@ public class Communicator extends Thread {
 	public static final boolean ACK = true;
 	public static final boolean NACK = false;
 
-	public static final int MSGTYPE_ACK = 0;
-	public static final int MSGTYPE_NEXTPOS = 1;
-	public static final int MSGTYPE_JUNCTION = 2;
-	public static final int MSGTYPE_NEEDHELP = 3;
-	public static final int MSGTYPE_READYTOHELP = 4;
 	
 	public static final int POLLING_FREQUENCY = 10; // of the listener in milliseconds
 	
@@ -212,7 +203,7 @@ public class Communicator extends Thread {
 	 * @throws Exception 
 	 */
 	public void sendNextPosition(Position pos) throws Exception {
-		sendMessage(new NextPositionMessage(pos).getMessageString());
+		sendMessage(new NextPositionMessage(pos));
 	}
 	
 	/**
@@ -221,7 +212,7 @@ public class Communicator extends Thread {
 	 * @throws Exception 
 	 */
 	public void sendDiscoveredJunction(Junction junct) throws Exception {
-		sendMessage(new DiscoveredJunctionMessage(junct).getMessageString());
+		sendMessage(new DiscoveredJunctionMessage(junct));
 	}
 	
 	/**
@@ -234,7 +225,7 @@ public class Communicator extends Thread {
 		     ok != AcknowledgeMessage.NOT_OK)
 			 throw new Exception(UNSUPORTED_PARAM);
 		 
-		sendMessage(new AcknowledgeMessage(ok).getMessageString());
+		sendMessage(new AcknowledgeMessage(ok));
 	}
 	
 	/**
@@ -255,14 +246,34 @@ public class Communicator extends Thread {
 	 * @throws Exception 
 	 */
 	public void sendDemandHelp(Position pos, Direction direction) throws Exception {
-		sendMessage(new NeedHelpMessage(pos, direction).getMessageString());
+		sendMessage(new NeedHelpMessage(pos, direction));
 	}
 	
+	/**
+	 * Sends command for remote control. This is used when two robots are collaborating.
+	 * The moves are one of object.RemoteMove
+	 * @see object.RemoteMove
+	 * @param the direction where to move
+	 * @throws Exception 
+	 */
+	public void sendRemoteMove(int type) throws Exception {
+		sendMessage(new RemoteMessage(type));
+	}
+	
+	/**
+	 * The msg must end with a "newline" character as it will be understood by the receiver!
+	 * @param msg
+	 * @throws Exception
+	 */
 	private void sendMessage(String msg) throws Exception {
 		//Console.println("Sending...");
-		dos.writeChars(msg + ENDL);
+		dos.writeChars(msg);
     	dos.flush();
     	//Console.println(msg +" send");
+	}
+	
+	private void sendMessage(Message msg) throws Exception {
+		sendMessage(msg.getMessageString() + ENDL);
 	}
 	
 	/* *
@@ -307,9 +318,56 @@ public class Communicator extends Thread {
 	    }
 	}
 	
-	private void processMessage(String msg) {
-		Console.println("r: "+ msg);
+	private void processMessage(String text) {
+		Console.println("r: "+ text);
+		
+		// data gets information...
+		int type = Integer.parseInt(text.charAt(0) + "");
+		Message m = null;
+		
+		switch (type) {
+		case Message.MSGTYPE_ACK: 
+			m = new AcknowledgeMessage(Integer.parseInt(text.charAt(2)+""));
+			processAcknowledgeMessage(m);
+			break;
+		case Message.MSGTYPE_NEXTPOS: 
+			m = new NextPositionMessage(new Position(
+					Integer.parseInt(text.charAt(2)+""),
+					Integer.parseInt(text.charAt(4)+"")));
+			processNextPositionMessage(m);
+			break;
+		case Message.MSGTYPE_JUNCTION:
+			m = new DiscoveredJunctionMessage(new Junction(new Position(
+					Integer.parseInt(text.charAt(2)+""),
+					Integer.parseInt(text.charAt(4)+"")),
+					Integer.parseInt(text.charAt(6)+"")));
+			processDiscoveredJunctionMessage(m);
+			break;
+		case Message.MSGTYPE_NEEDHELP:
+			m = new NeedHelpMessage(new Position(
+					Integer.parseInt(text.charAt(2)+""),
+					Integer.parseInt(text.charAt(4)+"")), new Direction(
+					Integer.parseInt(text.charAt(4)+""))); 
+			processNeedHelpMessage(m);
+			break;
+		case Message.MSGTYPE_READYTOHELP:
+			m = new ReadyToHelpMessage(); 
+			processReadyToHelpMessage(m);
+			break;
+		case Message.MSGTYPE_REMOTEMOVE:
+			m = new RemoteMessage(Integer.parseInt(text.charAt(2)+""));
+			processRemoteMessage(m);
+			break;
+		default: Console.println("Emsg: "+text); break;
+		}
 	}
+	
+	private void processAcknowledgeMessage(Message m) {}
+	private void processNextPositionMessage(Message m) {}
+	private void processDiscoveredJunctionMessage(Message m) {}
+	private void processNeedHelpMessage(Message m) {}
+	private void processReadyToHelpMessage(Message m) {}
+	private void processRemoteMessage(Message m) {}
 	
 	///////////////////////////////////////////////////////
 	//                                                   //
@@ -384,6 +442,9 @@ public class Communicator extends Thread {
 
 /*
  * $Log: Communicator.java,v $
+ * Revision 1.4  2009/04/27 08:48:14  mahanja
+ * Remote controll should work. All messages are parsed at the receiver (supports yet just a 10x10 grid)
+ *
  * Revision 1.3  2009/04/23 21:25:25  mahanja
  * Connection bug fixed (don't know exactly what it was)
  *

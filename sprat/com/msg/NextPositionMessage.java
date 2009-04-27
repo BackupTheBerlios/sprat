@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/NextPositionMessage.java,v 1.1 2009/04/23 12:08:34 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/NextPositionMessage.java,v 1.2 2009/04/27 08:48:14 mahanja Exp $
 
 package com.msg;
 
@@ -32,12 +32,15 @@ public class NextPositionMessage implements Message{
 	 * @return the String to be send over bluetooth
 	 */
 	public String getMessageString() {
-		return Communicator.MSGTYPE_NEXTPOS + ":" + pos.getX() + ";" + pos.getY();
+		return MSGTYPE_NEXTPOS + ":" + pos.getX() + ";" + pos.getY();
 	}
 }
 
 /*
  * $Log: NextPositionMessage.java,v $
+ * Revision 1.2  2009/04/27 08:48:14  mahanja
+ * Remote controll should work. All messages are parsed at the receiver (supports yet just a 10x10 grid)
+ *
  * Revision 1.1  2009/04/23 12:08:34  mahanja
  * First check in. This code isn't tested yet!
  *
