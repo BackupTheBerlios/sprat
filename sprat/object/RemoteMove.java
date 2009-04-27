@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/RemoteMove.java,v 1.1 2009/04/27 08:48:14 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/RemoteMove.java,v 1.2 2009/04/27 20:06:02 mahanja Exp $
 
 package object;
 
@@ -23,11 +23,17 @@ public class RemoteMove {
 	public static final int TURN_LEFT_BACKWARD = 5;
 	public static final int TURN_RIGHT = 6;
 	public static final int TURN_LEFT = 7; 
+	
+	public static final int FORKLIFT_DOWN= 8; 
+	public static final int FORKLIFT_UP= 9;
 }
 
 
 /*
  * $Log: RemoteMove.java,v $
+ * Revision 1.2  2009/04/27 20:06:02  mahanja
+ * Added forklifter function to the vocabulary
+ *
  * Revision 1.1  2009/04/27 08:48:14  mahanja
  * Remote controll should work. All messages are parsed at the receiver (supports yet just a 10x10 grid)
  *
