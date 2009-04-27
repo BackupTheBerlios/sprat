@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.3 2009/04/27 19:53:55 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.4 2009/04/27 20:20:09 mahanja Exp $
 
 package demo;
 
@@ -37,7 +37,7 @@ public class Demo {
 	public void pathFinding(){
 		calibrationTest();
 		Definitions.wayFinderOn=true;
-		Grid grid = new Grid();
+		Grid grid = Grid.getInstance();
 		Robot robo = new Robot(grid);
 		Motion motion = new Motion(robo, grid);
 
@@ -66,6 +66,9 @@ public class Demo {
 }
 /*
  * $Log: Demo.java,v $
+ * Revision 1.4  2009/04/27 20:20:09  mahanja
+ * Grid becomes a singleton
+ *
  * Revision 1.3  2009/04/27 19:53:55  stollf06
  * introduction of orientation on the grid
  *

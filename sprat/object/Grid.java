@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.2 2009/04/27 19:53:55 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.3 2009/04/27 20:20:09 mahanja Exp $
 package object;
 
 import java.util.Vector;
@@ -8,12 +8,27 @@ import tool.Console;
 
 public class Grid {
 	private Vector list;
+	private static Grid instance = null;
 	
 	/**
-	 * the grid should be created after the initialisation of master and slave
+	 * The grid should be created after the initialization of master and slave.
+	 * Grid is a singleton because there is just one only and like this it is 
+	 * accessible from everywhere.
 	 */
-	public Grid() {
+	protected Grid() {
 		list = new Vector();
+	}
+	
+	/**
+	 * Since Grid is a singleton, use this static method insteat of the 
+	 * constructor.
+	 * @return the singleton Grid instance
+	 */
+	public static Grid getInstance() {
+		if (instance == null) {
+			instance = new Grid();
+		}
+		return instance;
 	}
 
 	/**
@@ -22,7 +37,6 @@ public class Grid {
 	 * 
 	 * @param junct
 	 */
-	
 	public void setJunction(Junction junct) {
 		int junctIndex = getJunctIndex(junct.getPosition());
 		if (junctIndex == -1) {
@@ -111,6 +125,9 @@ public class Grid {
 }
 /*
  * $Log: Grid.java,v $
+ * Revision 1.3  2009/04/27 20:20:09  mahanja
+ * Grid becomes a singleton
+ *
  * Revision 1.2  2009/04/27 19:53:55  stollf06
  * introduction of orientation on the grid
  *
