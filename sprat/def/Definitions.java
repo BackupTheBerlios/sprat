@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.4 2009/04/23 19:00:07 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.5 2009/04/27 09:57:05 stollf06 Exp $
 
 package def;
 
@@ -6,12 +6,11 @@ import lejos.navigation.TachoNavigator;
 import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
-import sun.security.jca.GetInstance.Instance;
 
 /**
  * TODO: DESCRIPTION
  * 
- * @author $Author: mahanja $
+ * @author $Author: stollf06 $
  */
 public class  Definitions {
 	public static final String MASTER = "NXT";
@@ -37,6 +36,9 @@ public class  Definitions {
 	public static BrightnessRange colMyObjects;
 	public static BrightnessRange colOtherRobotObjects;
 	public static BrightnessRange colCommonObjects;
+	
+	public static final int masterJnctOffset = 0;
+	public static final int slaveJunctOffset = 2;//relative x-axis offset of slave compared to the master 
 	
 	public static final String[] calibWhitePaper = {"put the light sensor", "on the white surface", "then press enter to", "start the calibration"}; 
 
@@ -71,6 +73,9 @@ public class  Definitions {
 
 /*
  * $Log: Definitions.java,v $
+ * Revision 1.5  2009/04/27 09:57:05  stollf06
+ * added masterJnctOffset and slaveJunctOffset
+ *
  * Revision 1.4  2009/04/23 19:00:07  mahanja
  * The names are uppercase.
  * The name of the other robot will be found out at init.
