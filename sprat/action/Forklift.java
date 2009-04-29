@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Forklift.java,v 1.1 2009/04/23 21:26:00 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Forklift.java,v 1.2 2009/04/29 14:32:14 mahanja Exp $
 
 package action;
 import lejos.nxt.Button;
@@ -11,8 +11,8 @@ import lejos.nxt.Motor;
 public class Forklift {
 	
 	private static int SPEED = 50,
-	                UP_ANGLE = 75,
-	              DOWN_ANGLE = -75;
+	                UP_ANGLE = -85,
+	              DOWN_ANGLE = 85;
 	
 	private boolean toggle = true;
 	
@@ -53,6 +53,9 @@ public class Forklift {
 
 	/*
 	 * $Log: Forklift.java,v $
+	 * Revision 1.2  2009/04/29 14:32:14  mahanja
+	 * Adapted to the new design of the robot.
+	 *
 	 * Revision 1.1  2009/04/23 21:26:00  mahanja
 	 * The forklift controlling class
 	 *
