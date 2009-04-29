@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.4 2009/04/27 20:20:09 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.5 2009/04/29 19:08:45 stollf06 Exp $
 
 package demo;
 
@@ -38,7 +38,7 @@ public class Demo {
 		calibrationTest();
 		Definitions.wayFinderOn=true;
 		Grid grid = Grid.getInstance();
-		Robot robo = new Robot(grid);
+		Robot robo =Robot.initInstance(grid);
 		Motion motion = new Motion(robo, grid);
 
 		
@@ -66,6 +66,9 @@ public class Demo {
 }
 /*
  * $Log: Demo.java,v $
+ * Revision 1.5  2009/04/29 19:08:45  stollf06
+ * better handling of next junction and actualjunction
+ *
  * Revision 1.4  2009/04/27 20:20:09  mahanja
  * Grid becomes a singleton
  *

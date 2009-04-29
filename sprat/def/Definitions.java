@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.6 2009/04/27 19:53:55 stollf06 Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.7 2009/04/29 19:08:45 stollf06 Exp $
 
 package def;
 
@@ -19,18 +19,18 @@ public class  Definitions {
 	public static final LightSensor ls = new LightSensor(SensorPort.S1);
 	public static final float junctionSize = 5.9f;//give value in cm
 	public static final float distBtwnJunct = 14.1f;//give value in cm
-	public static final float distBtwnLsWheel = 3.7f;//give the distance between the light sensor and wheel center in cm
+	public static final float distBtwnLsWheel = 3.0f;//give the distance between the light sensor and wheel center in cm
 	public static final int leftJunctAngle = -90;
 	public static final int rightJunctAngle = 90;
 	public static final float corrTestAngle = 20.0f; //used to test the 
 	public static final float corrAngle = 3.0f; //used to correct the direction in case it goes of the line
-	public static final int brightTolerance = 5; //used to give some comparitive tolerance
+	public static final int brightTolerance = 20; //used to give some comparitive tolerance
 	public static boolean wayFinderOn = true; //TODO delete the concerning code in Motion.isThereAWay()
 	
 	public String myName = "UNDEFINED"; // Must be defined before starting the AI!
 	public String othersName = "UNDEFINED"; // Must be defined before starting the AI!
 
-	public static final TachoNavigator  pilot = new TachoNavigator (5.5f, 12.5f, Motor.A, Motor.B,false);//TODO
+	public static final TachoNavigator  pilot = new TachoNavigator (5.5f, 14.0f, Motor.A, Motor.B,false);//TODO
 	public static BrightnessRange colWhiteGround;
 	public static BrightnessRange colLine;
 	public static BrightnessRange colMyObjects;
@@ -58,10 +58,13 @@ public class  Definitions {
 	}
 	
 	public static Definitions initInstance(String name) {
-		return instance = new Definitions(name); 
+		if(instance == null){
+			instance = new Definitions(name); 
+		}
+		return instance;
 	}
 	
-	public Definitions(String name) {
+	private Definitions(String name) {
 		
 		myName = name;
 		if (myName.equals(MASTER)) {
@@ -74,6 +77,9 @@ public class  Definitions {
 
 /*
  * $Log: Definitions.java,v $
+ * Revision 1.7  2009/04/29 19:08:45  stollf06
+ * better handling of next junction and actualjunction
+ *
  * Revision 1.6  2009/04/27 19:53:55  stollf06
  * introduction of orientation on the grid
  *
