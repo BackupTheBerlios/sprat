@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Junction.java,v 1.2 2009/04/27 19:53:55 stollf06 Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Junction.java,v 1.3 2009/04/29 19:01:23 mahanja Exp $
 
 package object;
 
@@ -8,7 +8,7 @@ import def.Definitions;
 /**
  * TODO: DESCRIPTION
  * 
- * @author $Author: stollf06 $
+ * @author $Author: mahanja $
  */
 public class Junction {
 	
@@ -53,10 +53,22 @@ public class Junction {
 	public int getType() {
 		return type;
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof Junction) {
+			Junction j = (Junction)o;
+			return (j.type == type &&
+					j.getPosition().equals(pos));
+		}
+		return false;
+	}
 }
 
 /*
  * $Log: Junction.java,v $
+ * Revision 1.3  2009/04/29 19:01:23  mahanja
+ * The AI is near to be complete. Never tested yet!
+ *
  * Revision 1.2  2009/04/27 19:53:55  stollf06
  * introduction of orientation on the grid
  *
