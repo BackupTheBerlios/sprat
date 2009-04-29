@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.4 2009/04/27 19:53:55 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.5 2009/04/29 16:06:51 stollf06 Exp $
 
 package action;
 
@@ -8,8 +8,7 @@ import object.Junction;
 import object.Robot;
 import tool.Console;
 import def.Definitions;
-import lejos.nxt.Button;
-import lejos.nxt.LCD;
+
 
 public class Motion {
 	private Robot robo;
@@ -83,21 +82,25 @@ public class Motion {
 	}
 
 	public boolean goToNextJunction(){
-		Button.waitForPress();
+		//Button.waitForPress();
 		//reservate the path
 		robo.setMyNextJunction(grid.getNextProjectedJunction(robo));
-		Console.println("projected");
-		Button.waitForPress();
+		//Console.println("projected");
+		//Button.waitForPress();
 		float distanceToGo = Definitions.distBtwnJunct
 				+ Definitions.junctionSize;
 		Definitions.pilot.travel(distanceToGo / 2);
 		if (!isThereAWay()) {
+			//Console.println("no way found");
+			//Button.waitForPress();
 			Definitions.pilot.travel(-distanceToGo / 2);
 			//change the path
 			robo.setMyNextJunction(robo.getMyActualJunction());
 			return false;
 		}
 		Definitions.pilot.travel(distanceToGo / 2);
+		robo.setMyActualJunction(robo.getMyNextJunction());
+		robo.setMyNextJunction(grid.getNextProjectedJunction(robo));
 		return true;
 	}
 
@@ -158,6 +161,9 @@ public class Motion {
 }
 /*
  * $Log: Motion.java,v $
+ * Revision 1.5  2009/04/29 16:06:51  stollf06
+ * better handling of next junction and actualjunction
+ *
  * Revision 1.4  2009/04/27 19:53:55  stollf06
  * introduction of orientation on the grid
  *
