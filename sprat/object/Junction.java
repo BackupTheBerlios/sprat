@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Junction.java,v 1.3 2009/04/29 19:01:23 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Junction.java,v 1.4 2009/05/04 20:33:18 mahanja Exp $
 
 package object;
 
@@ -62,10 +62,52 @@ public class Junction {
 		}
 		return false;
 	}
+	
+	// debug:
+	public String toString() {
+		String str = "X:"+pos.getX()+",Y:"+pos.getY();
+		
+		if (type == UNKNOWN) {
+			str = str + "T:UNKNOWN";
+		} else if (type == EMPTY) {
+			str = str + "T:EMPTY";
+		} else if (type == MASTER_OBJ) {
+			str = str + "T:MASTER_OBJ";
+		} else if (type == SLAVE_OBJ) {
+			str = str + "SLAVE_OBJ";
+		} else if (type == COMMON_OBJ) {
+			str = str + "COMMON_OBJ";
+		} else if (type == HOME_BASE) {
+			str = str + "T:HOME_BASE";
+		}
+		
+		return str;
+	}
+	
+	public String getTypeChar() {
+		if (type == UNKNOWN) {
+			return "U";
+		} else if (type == EMPTY) {
+			return "E";
+		} else if (type == MASTER_OBJ) {
+			return "M";
+		} else if (type == SLAVE_OBJ) {
+			return "S";
+		} else if (type == COMMON_OBJ) {
+			return "C";
+		} else if (type == HOME_BASE) {
+			return "H";
+		}
+		
+		return "?"; // can never occur!!!
+	}
 }
 
 /*
  * $Log: Junction.java,v $
+ * Revision 1.4  2009/05/04 20:33:18  mahanja
+ * It searches a way (bug with second unknown field)
+ *
  * Revision 1.3  2009/04/29 19:01:23  mahanja
  * The AI is near to be complete. Never tested yet!
  *

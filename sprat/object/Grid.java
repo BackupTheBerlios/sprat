@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.6 2009/05/04 15:34:05 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.7 2009/05/04 20:33:18 mahanja Exp $
 package object;
 
 import java.util.Enumeration;
@@ -12,8 +12,9 @@ import tool.Console;
 import tool.MyEnumeration;
 
 public class Grid {
-	private MyHashtable grid;
+	public static final int GRID_SIZE = 3;//5; TODO!!!
 	private static Grid instance = null;
+	Junction grid[][];
 	
 	private int gridSize = -1;
 	private boolean gridSizeIsKnown = false;
@@ -24,7 +25,11 @@ public class Grid {
 	 * accessible from everywhere.
 	 */
 	protected Grid() {
-		grid = new MyHashtable();
+		grid = new Junction[GRID_SIZE][GRID_SIZE];
+		
+		for (int x = 0; x < GRID_SIZE; x++)
+			for (int y = 0; y < GRID_SIZE; y++)
+				grid[x][y] = new Junction(new Position(x,y),Junction.UNKNOWN);
 	}
 	
 	/**
@@ -46,14 +51,14 @@ public class Grid {
 	 * @param junct
 	 */
 	public void setJunction(Junction junct) {
-		if (gridSize < 0 &&
-			junct.getType() == Junction.OUTSIDE) {
-
+		if (junct.getType() == Junction.OUTSIDE) {
 			setGridSize(junct.getPosition().getX() > junct.getPosition().getY() 
 						? junct.getPosition().getX() -1 : junct.getPosition().getY() -1);
+		} else {
+			if (grid[junct.getPosition().getX()][junct.getPosition().getY()].getType() != Junction.HOME_BASE)
+				grid[junct.getPosition().getX()][junct.getPosition().getY()] = junct;
+printGrid();
 		}
-		
-		grid.put(junct.getPosition(), junct);
 	}
 	
 	private void setGridSize(int size) {
@@ -69,11 +74,11 @@ public class Grid {
 	 * @return Junction the junction on the given position. 
 	 */
 	public Junction getJunction(Position pos) {
-		Junction j = (Junction)grid.get(pos);
+		Junction j = (Junction)grid[pos.getX()][pos.getY()];
 		if (j == null) 
-			grid.put(pos, new Junction(pos, Junction.UNKNOWN));
+			grid[pos.getX()][pos.getY()] = new Junction(pos, Junction.UNKNOWN);
 		
-		return (Junction)grid.get(pos);
+		return grid[pos.getX()][pos.getY()];
 	}
 
 	/**
@@ -127,13 +132,13 @@ public class Grid {
 	 * @return a 2D boolean map where true values are empty positions
 	 */
 	private boolean[][] getMap() {
-		boolean array[][] = new boolean[gridSize][gridSize];
-		Enumeration enum = grid.keys();
-		Position p;
-		while (enum.hasMoreElements()) {
-			p = (Position)enum.nextElement();
-			array[p.getX()][p.getY()] = (getJunction(p).getType() == Junction.EMPTY);
-		}
+		boolean array[][] = new boolean[GRID_SIZE][GRID_SIZE];
+
+		for (int x = 0; x < GRID_SIZE; x++)
+			for (int y = 0; y < GRID_SIZE; y++)
+				array[x][y] = (grid[x][y].getType() == Junction.EMPTY ||
+							   grid[x][y].getType() == Junction.HOME_BASE);
+
 		return array;
 	}
 	
@@ -148,12 +153,15 @@ public class Grid {
 		for (int x = 0; x < gridSize; x++) {
 			for (int y = 0; y < gridSize; y++) {
 				currP.setX(x); currP.setY(y);
-				currJ = (Junction)grid.get(currP);
+				currJ = grid[currP.getX()][currP.getY()];
+				if (currJ == null) // this field does not exist or isn't yet discovered
+					continue;
+				
 				if (currJ.getType() == Junction.MASTER_OBJ &&
-					Definitions.getInstance().myName == Definitions.MASTER)
+					Definitions.getInstance().myName.equals(Definitions.MASTER))
 					return false;
 				else if (currJ.getType() == Junction.SLAVE_OBJ &&
-						 Definitions.getInstance().myName == Definitions.SLAVE)
+						 Definitions.getInstance().myName.equals(Definitions.SLAVE))
 					return false;
 				//else if (currJ.getType() == Junction.COMMON_OBJ)
 					//return false;
@@ -163,16 +171,29 @@ public class Grid {
 	}
 
 	public Vector getAWayToNextUnknown(Robot robot) {
-		Position currP = new Position(-1, -1);
-		Junction currJ = null;
-		for (int x = 0; x < gridSize; x++) {
-			for (int y = 0; y < gridSize; y++) {
-				currP.setX(x); currP.setY(y);
-				currJ = (Junction)grid.get(currP);
-				if (currJ.getType() == Junction.UNKNOWN) {
-					BackTracker guide = new BackTracker(getMap());
-					return guide.getWay(robot.getMyActualPosition(),
-									    robot.getHomeBase());
+//Console.println("W: X"+robot.getMyActualPosition().getX()+"-y"+robot.getMyActualPosition().getY());
+//	printGrid();
+		for (int x = 0; x < GRID_SIZE; x++) {
+			for (int y = 0; y < GRID_SIZE; y++) {
+//Console.println(grid[x][y].toString());
+//Button.waitForPress();
+				if (grid[x][y].getType() == Junction.UNKNOWN) {
+Console.println("UK@:"+grid[x][y].toString());
+Button.waitForPress();
+					boolean map[][] = getMap();
+					map[x][y] = true;	// there where we want to go must be enabled 
+					BackTracker guide = new BackTracker(map);
+
+					guide.getWay(robot.getMyActualPosition(),
+								 new Position(x,y));
+					
+					Vector v = guide.getWay(robot.getMyActualPosition(),
+											grid[x][y].getPosition());
+					if (v == null) {
+//Console.println(".");
+						continue;
+					}
+					return v;
 				}
 			}
 		}
@@ -185,7 +206,7 @@ public class Grid {
 		for (int x = 0; x < gridSize; x++) {
 			for (int y = 0; y < gridSize; y++) {
 				currP.setX(x); currP.setY(y);
-				currJ = (Junction)grid.get(currP);
+				currJ = grid[currP.getX()][currP.getY()];
 				if (currJ.getType() != Junction.EMPTY ||
 					currJ.getType() != Junction.HOME_BASE ||
 					currJ.getType() != Junction.OUTSIDE) {
@@ -212,13 +233,13 @@ public class Grid {
 		for (int x = 0; x < gridSize; x++) {
 			for (int y = 0; y < gridSize; y++) {
 				currP.setX(x); currP.setY(y);
-				currJ = (Junction)grid.get(currP);
+				currJ = grid[currP.getX()][currP.getY()];
 				if (currJ.getType() == Junction.MASTER_OBJ &&
-					Definitions.getInstance().myName == Definitions.MASTER) {
+					Definitions.getInstance().myName.equals(Definitions.MASTER)) {
 					
 					return guide.getWay(robot.getMyActualPosition(), currP);
 				} else if (currJ.getType() == Junction.SLAVE_OBJ &&
-						   Definitions.getInstance().myName == Definitions.SLAVE) {
+						   Definitions.getInstance().myName.equals(Definitions.SLAVE)) {
 					
 					return guide.getWay(robot.getMyActualPosition(), currP);
 				}/*else if (currJ.getType() == Junction.COMMON_OBJ) {
@@ -237,7 +258,7 @@ public class Grid {
 	/**
 	 * returns the orientation of the common obj at the given position
 	 * @param p the position where of the common obj of which we want to know the orientation.
-	 * @return Direction.XXX if the direction is known. If not null will be returned.
+	 * @return Direction.XXX if the direction is known. Else null will be returned.
 	 * @see object.Direction
 	 */
 	private Direction getOrientation(Position p) {
@@ -273,7 +294,7 @@ public class Grid {
 		for (int x = 0; x < gridSize; x++) {
 			for (int y = 0; y < gridSize; y++) {
 				currP.setX(x); currP.setY(y);
-				currJ = (Junction)grid.get(currP);
+				currJ = grid[currP.getX()][currP.getY()];
 				if (currJ.getType() == Junction.COMMON_OBJ) {
 					return currP;
 				}
@@ -289,14 +310,14 @@ public class Grid {
 		for (int x = 0; x < gridSize; x++) {
 			for (int y = 0; y < gridSize; y++) {
 				currP.setX(x); currP.setY(y);
-				currJ = (Junction)grid.get(currP);
+				currJ = grid[currP.getX()][currP.getY()];
 
 				if (currJ.getType() == Junction.MASTER_OBJ &&
-					Definitions.getInstance().myName == Definitions.MASTER)
+					Definitions.getInstance().myName.equals(Definitions.MASTER))
 					
 					return true;
 				else if (currJ.getType() == Junction.SLAVE_OBJ &&
-					     Definitions.getInstance().myName == Definitions.SLAVE) 
+					     Definitions.getInstance().myName.equals(Definitions.SLAVE)) 
 					
 					return true;
 			}
@@ -379,13 +400,13 @@ public class Grid {
 		 * @param endP where the way ends
 		 * @return
 		 */
-		public Vector getWay(Position startP, Position endP) {
-			boolean[][] way = new boolean[gridSize][gridSize];
+		/*public Vector getWay(Position startP, Position endP) {
+			boolean[][] way = new boolean[GRID_SIZE][GRID_SIZE];
 			way[startP.getX()][startP.getY()] = true;	// setting start point
 			if (getWay(way, startP.getX(), startP.getY(), endP.getX(), endP.getY()))
 				return convertToPath(way, startP, endP);
 			else
-				return new Vector();
+				return null;
 		}
 		
 		/** 
@@ -393,7 +414,7 @@ public class Grid {
 		 * x, y = start point coordinate. xb, yb = target coordinate.
 		 * Way is a in-out-parameter.
 		 * Returns true if there is a way found.
-		 * */
+		 * * /
 		private boolean getWay(boolean[][] way, int x, int y, int xb, int yb) {
 			// reached the target
 			if (x == xb && y == yb)
@@ -433,6 +454,80 @@ public class Grid {
 					way[x][y+1] = false;
 			}
 			return false;	// should never occur!
+		}*/
+		
+		
+		
+		public Vector getWay(Position startP, Position endP) {
+			boolean[][] way = new boolean[GRID_SIZE][GRID_SIZE];
+			way[startP.getX()][startP.getY()] = true;	// setting start point
+			Vector v = new Vector();
+			getWay(v, way, startP.getX(), startP.getY(), endP.getX(), endP.getY());
+			return v;
+				//return convertToPath(way, startP, endP);
+			//else
+				//return null;
+		}
+		
+		/** 
+		 * Searches a way by exploiting the backtracking algorithm (recursive).
+		 * x, y = start point coordinate. xb, yb = target coordinate.
+		 * Way is a in-out-parameter.
+		 * Returns true if there is a way found.
+		 */
+		private boolean getWay(Vector v, boolean[][] way, int x, int y, int xb, int yb) {
+			// reached the target
+			if (x == xb && y == yb) {
+				v.addElement(new Position(xb,yb));
+				return true;
+			}
+			
+			// search in all cardinal directions
+			// SOUTH
+			if (y - 1 >= 0 && way[x][y-1] != true) {
+				way[x][y-1] = true;
+				v.addElement(new Position(x,y-1));
+				if (getWay(v, way, x, y-1, xb, yb))
+					return true;
+				else {
+					v.removeElementAt(v.size()-1);
+					way[x][y-1] = false;	
+				}
+			}
+			// WEST
+			if (x - 1 >= 0 && way[x-1][y] != true) {
+				way[x-1][y] = true;
+				v.addElement(new Position(x-1,y));
+				if (getWay(v, way, x-1, y, xb, yb))
+					return true;
+				else {
+					v.removeElementAt(v.size()-1);
+					way[x-1][y] = false;
+				}
+			}
+			// EAST
+			if (x + 1 < gridSize && way[x+1][y] != true) {
+				way[x+1][y] = true;
+				v.addElement(new Position(x+1,y));
+				if (getWay(v, way, x+1, y, xb, yb))
+					return true;
+				else {
+					v.removeElementAt(v.size()-1);
+					way[x+1][y] = false;
+				}
+			}
+			// NORTH
+			if (y + 1 < gridSize && way[x][y+1] != true) {
+				way[x][y+1] = true;
+				v.addElement(new Position(x,y+1));
+				if (getWay(v, way, x, y+1, xb, yb))
+					return true;
+				else {
+					v.removeElementAt(v.size()-1);
+					way[x][y+1] = false;
+				}
+			}
+			return false;	// should never occur!
 		}
 	}
 
@@ -447,20 +542,20 @@ public class Grid {
 	 * @return a chain of Positions indicating the way from the 
 	 * start position to the end position
 	 */
-	private Vector convertToPath(boolean[][] way, Position start, Position end) {
+	/*private Vector convertToPath(boolean[][] way, Position start, Position end) {
 		int currX = start.getX(),
 			currY = start.getY();
 		int lastPosX = currX,
 			lastPosY = currY;
 		Vector path = new Vector();
 		while (currX == end.getX() && currY == end.getY()) {
-			// go south
-			if (currY - 1 >= 0 &&
-			    way[currX][currY-1] &&
-			    currX != lastPosX &&
-			    currY - 1 != lastPosY) {
-			
-				path.addElement(new Position(currX, --currY));
+			// go north
+			if (currY + 1 < gridSize &&
+					   way[currX][currY+1] &&
+					   currX != lastPosX &&
+					   currY + 1 != lastPosY) {
+				
+				path.addElement(new Position(currX, ++currY));
 			// go west
 			} else if (currX - 1 >= 0 &&
 					   way[currX-1][currY] &&
@@ -477,17 +572,17 @@ public class Grid {
 				
 				path.addElement(new Position(++currX, currY));
 			
-			// go north
-			} else if (currY + 1 < gridSize &&
-					   way[currX][currY+1] &&
-					   currX != lastPosX &&
-					   currY + 1 != lastPosY) {
+			// go south
+			} else if (currY - 1 >= 0 &&
+				    way[currX][currY-1] &&
+				    currX != lastPosX &&
+				    currY - 1 != lastPosY) {
 				
-				path.addElement(new Position(currX, ++currY));
+					path.addElement(new Position(currX, --currY));
 			}
 		}
 		return path;
-	}
+	}*/
 	
 	/**
 	 * This is not a Hashtable as it should be but simply an array. The size is
@@ -499,9 +594,9 @@ public class Grid {
 	 * 
 	 * @author greila06
 	 *
-	 */
-	private class MyHashtable /* extends Hashtable */ {
-		public static final int GRID_SIZE = 5+1;
+	 * /
+	private class MyHashtable {
+		public static final int GRID_SIZE = 5;
 		Junction array[][] = new Junction[GRID_SIZE][GRID_SIZE];
 	
 		public Object get(Object aKey) {
@@ -510,7 +605,7 @@ public class Grid {
 				try {
 					return array[p.getX()][p.getY()];
 				} catch (ArrayIndexOutOfBoundsException aioobe) {
-					return null;
+					return new Junction(new Position(p.getX(), p.getY()), Junction.OUTSIDE);
 				}
 			} else return null;
 		}
@@ -541,10 +636,21 @@ public class Grid {
 			}
 			//return aValue;
 		}
+	}*/
+	
+	public void printGrid() {
+		for (int y = 0; y < GRID_SIZE; y++) {
+			Console.println("");
+			for (int x = 0; x < GRID_SIZE; x++)
+				Console.print(""+grid[x][y].getTypeChar());
+		}
 	}
 }
 /*
  * $Log: Grid.java,v $
+ * Revision 1.7  2009/05/04 20:33:18  mahanja
+ * It searches a way (bug with second unknown field)
+ *
  * Revision 1.6  2009/05/04 15:34:05  mahanja
  * It compiles and the robot walks to somewhere
  *

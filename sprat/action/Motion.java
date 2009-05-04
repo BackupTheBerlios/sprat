@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.8 2009/05/04 15:39:19 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.9 2009/05/04 20:33:19 mahanja Exp $
 
 package action;
 
@@ -96,11 +96,9 @@ public class Motion {
 		
 		// out of grid
 		if (!isThereAWay()) {
-			//Console.println("no way found");
-			//Button.waitForPress();
 			Definitions.pilot.travel(-distanceToGo / 2);
 			//change the path
-			//robo.setMyNextPosition(robo.getMyActualPosition());
+			robo.setMyNextPosition(actualP);
 			robo.setMyActualPosition(actualP);
 			return false;
 		}
@@ -190,6 +188,9 @@ public class Motion {
 }
 /*
  * $Log: Motion.java,v $
+ * Revision 1.9  2009/05/04 20:33:19  mahanja
+ * It searches a way (bug with second unknown field)
+ *
  * Revision 1.8  2009/05/04 15:39:19  stollf06
  * with the motions for the slave robot
  *

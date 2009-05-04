@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.8 2009/05/04 15:15:17 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.9 2009/05/04 20:33:19 mahanja Exp $
 
 package def;
 
@@ -19,7 +19,7 @@ public class  Definitions {
 	public static final LightSensor ls = new LightSensor(SensorPort.S1);
 	public static final float junctionSize = 5.9f;//give value in cm
 	public static final float distBtwnJunct = 14.1f;//give value in cm
-	public static final float distBtwnLsWheel = 3.0f;//give the distance between the light sensor and wheel center in cm
+	public static final float distBtwnLsWheel = 8.5f;//give the distance between the light sensor and wheel center in cm
 	public static final int leftJunctAngle = -90;
 	public static final int rightJunctAngle = 90;
 	public static final float corrTestAngle = 20.0f; //used to test the 
@@ -30,7 +30,7 @@ public class  Definitions {
 	public String myName = "UNDEFINED"; // Must be defined before starting the AI!
 	public String othersName = "UNDEFINED"; // Must be defined before starting the AI!
 
-	public static final TachoNavigator  pilot = new TachoNavigator (5.5f, 14.0f, Motor.A, Motor.B,false);//TODO
+	public static final TachoNavigator  pilot = new TachoNavigator (5.5f, 12.3f, Motor.A, Motor.B,false);//TODO
 	public static BrightnessRange colWhiteGround;
 	public static BrightnessRange colLine;
 	public static BrightnessRange colMyObjects;
@@ -78,6 +78,9 @@ public class  Definitions {
 
 /*
  * $Log: Definitions.java,v $
+ * Revision 1.9  2009/05/04 20:33:19  mahanja
+ * It searches a way (bug with second unknown field)
+ *
  * Revision 1.8  2009/05/04 15:15:17  mahanja
  * Ai is mostly implemented but is still throwing errors everywhere!
  *

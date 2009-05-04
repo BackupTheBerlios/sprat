@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.5 2009/05/04 15:40:41 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.6 2009/05/04 20:33:19 mahanja Exp $
 package ai;
 
 import java.util.Vector;
@@ -59,42 +59,38 @@ public class AI {
 		
 		while ((task = whatToDo(oldtask)) != null) {
 			
-			Console.println(" - NEXT - ");
-			Button.waitForPress();
-			if (!task.hasNextPosition())
-				continue; // a kind of busy waiting 
-			Console.println("1");
-			Button.waitForPress();
-			Position nextP = task.nextPosition();
-			Console.print("-2");
-			Button.waitForPress();
-			// turn around
-			Position inFront = grid.getNextProjectedPosition(robo);
-			Console.print("-3");
-			Button.waitForPress();
-			if (robo.getMyActualPosition() == null)
-				Console.print("NULL");
-			else
-				Console.print("OKAY");
+			if (!task.hasNextPosition()) {
+Console.println(" FUCK ");
+Button.waitForPress();
+				continue; // a kind of busy waiting
+			}
+//Console.println(" SUPI ");
+//Button.waitForPress();
 			
-			grid.getRelativePositionLeft(robo);
-			Console.print("COOOOL");
-			Button.waitForPress();
-			if (nextP != inFront)
+			Position nextP = task.nextPosition();
+			// turn around
+Console.println(" CP: x"+robo.getMyActualPosition().getX()+"-y"+robo.getMyActualPosition().getY());
+Console.println(" NP: x"+nextP.getX()+"-y"+nextP.getY());
+//Button.waitForPress();
+			Position inFront = grid.getNextProjectedPosition(robo);
+			
+			if (!nextP.equals(inFront))
 				if (nextP.equals(grid.getRelativePositionLeft(robo))) {
+//Console.println(" LEFT ");
+//Button.waitForPress();
 					motion.turn(true);
 				} else if (nextP.equals(grid.getRelativePositionRight(robo))) {
+//Console.println(" RIGHT ");
+//Button.waitForPress();
 					motion.turn(false);
 				} else {
+//Console.println(" BEHIND ");
+//Button.waitForPress();
 					motion.turn(true); motion.turn(true);
 				}
-			Console.print("-4");
-			Button.waitForPress();
 			// go
 			motion.goToNextJunction();
 			oldtask = task;
-			Console.print("-5");
-			Button.waitForPress();
 			grid.setJunction(new Junction(robo.getMyActualPosition(), eye.getType()));
 		}
 		Console.println(" - FIN - ");
@@ -139,8 +135,6 @@ public class AI {
 	 */
 	public Task whatToDo(Task oldTask) {
 		// if the task can not be broken up
-	Console.println("projected1");
-	Button.waitForPress();
 
 		if (oldTask != null)
 			if (!oldTask.isBreakable() && oldTask.hasNextPosition())
@@ -156,10 +150,6 @@ public class AI {
 		
 		// size of the grid is unknown
 		if (mode == DISCOVER_MODE) {
-			Console.println("M:Discover");
-			Button.waitForPress();
-			Console.println("T:"+grid.getJunction(robo.getMyActualPosition()).getType());
-			Button.waitForPress();
 			// discovering an empty or myhomebase junction
 			if (grid.getJunction(robo.getMyActualPosition()).getType() == Junction.EMPTY |
 				grid.getJunction(robo.getMyActualPosition()).getType() == Junction.HOME_BASE) {
@@ -171,8 +161,10 @@ public class AI {
 				v.addElement(grid.getNextProjectedPosition(robo));
 				return new Task(v, mode);
 			}
-		}
-		/**
+		}// OK!!!
+		
+		
+		
 		if (mode == DISCOVER_MODE || mode == SEARCH_MODE || mode == SEEKWAY_MODE) {
 			// found an obj belonging to me
 			if (((grid.getJunction(robo.getMyActualPosition()).getType() == Junction.MASTER_OBJ) &&
@@ -185,17 +177,23 @@ public class AI {
 				return new Task(v, mode);
 			} // obj not for me
 		// size is known but not all junctions
-		}
+		}// NOK
+		
+		
+		
+		
 		if (mode == SEARCH_MODE) {
-			Vector v = null; Position p = null;
+			Vector v = null; //Position p = null;
 			// no cluttered obj known
 			if (grid.nothingElseThanSearching()) { // does not include common obj
-				if (oldTask.hasNextPosition())
+				if (oldTask.hasNextPosition()) {
 					return oldTask; // old task not yet finished
-				else
+				} else {
+grid.getAWayToNextUnknown(robo);
 					return new Task(grid.getAWayToNextUnknown(robo), SEARCH_MODE); // need a new task
+				}
 			// there is an obj for me to tidy
-			} else if (grid.isThereAnObjectForMe()) {
+			}/* else if (grid.isThereAnObjectForMe()) {
 				v = grid.getAWayToNextKnownUncommon(robo); // an obj concerning to me or a common one
 				
 				//if (((Junction)v.elementAt(v.size()-1)).getType() == Junction.MASTER_OBJ ||
@@ -225,18 +223,17 @@ public class AI {
 				} else { // all ok for colaboration
 					colaborate();
 				}* /
-			}
+			}*/
 			
 			return new Task(v, mode);
-		} else if (grid.nothingMoreToDo()) {
+		}/* else if (grid.nothingMoreToDo()) {
 			if (grid.getJunction(robo.getMyActualPosition()).equals(robo.getHomeBase())) {
 				setMode(FINISHED_MODE);
 				return new Task(new Vector(), mode);
 			} else {
 				return new Task(grid.getAWayBackHome(robo), mode);
 			}
-		}
-		*/
+		}*/
 		// if reached the following lines it is a bug!
 		Console.println("E: no task def");
 		return null;
@@ -249,6 +246,9 @@ public class AI {
 
 /*
  * $Log: AI.java,v $
+ * Revision 1.6  2009/05/04 20:33:19  mahanja
+ * It searches a way (bug with second unknown field)
+ *
  * Revision 1.5  2009/05/04 15:40:41  stollf06
  * took out a wrong import
  *

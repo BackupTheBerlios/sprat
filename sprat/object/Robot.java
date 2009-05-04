@@ -1,6 +1,7 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Robot.java,v 1.3 2009/05/04 15:15:17 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Robot.java,v 1.4 2009/05/04 20:33:18 mahanja Exp $
 package object;
 
+import action.Eye;
 import lejos.nxt.Button;
 import tool.Console;
 import def.Definitions;
@@ -86,8 +87,10 @@ public class Robot {
 
 	// SETTERS
 	public void setMyNextPosition(Position myNextPos) {
+		if (myNextPos.equals(myActualPosition))
+			grid.setJunction(new Junction(myNextPosition, Junction.OUTSIDE));
+		
 		this.myNextPosition = myNextPos;
-		//grid.setJunction(myNextJunction);
 	}
 
 	public void setOtherNextPosition(Position otherNextPos) {
@@ -95,7 +98,7 @@ public class Robot {
 	}
 
 	public void setMyActualPosition(Position myActualPos) {
-		this.myActualPosition = myActualPos; 
+		this.myActualPosition = myActualPos;
 	}
 
 	public void setOtherActualPosition(Position otherActualPos) {
@@ -104,6 +107,9 @@ public class Robot {
 }
 /*
  * $Log: Robot.java,v $
+ * Revision 1.4  2009/05/04 20:33:18  mahanja
+ * It searches a way (bug with second unknown field)
+ *
  * Revision 1.3  2009/05/04 15:15:17  mahanja
  * Ai is mostly implemented but is still throwing errors everywhere!
  *
