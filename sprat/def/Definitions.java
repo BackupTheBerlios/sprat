@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.7 2009/04/29 19:08:45 stollf06 Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.8 2009/05/04 15:15:17 mahanja Exp $
 
 package def;
 
@@ -10,7 +10,7 @@ import lejos.nxt.SensorPort;
 /**
  * TODO: DESCRIPTION
  * 
- * @author $Author: stollf06 $
+ * @author $Author: mahanja $
  */
 public class  Definitions {
 	public static final String MASTER = "NXT";
@@ -37,8 +37,9 @@ public class  Definitions {
 	public static BrightnessRange colOtherRobotObjects;
 	public static BrightnessRange colCommonObjects;
 	
-	public static final int masterJnctOffset = 0;
-	public static final int slaveJunctOffset = 2;//relative x-axis offset of slave compared to the master 
+	public static final int masterJnctOffset = 0;//absolute x-axis offset compared to 0
+	public static final int slaveJunctOffset = 2;//relative x-axis offset of slave compared to the master
+	public static final int commonJunctOffset = 1;//absolute x-axis offset
 	
 	public static final String[] calibWhitePaper = {"put the light sensor", "on the white surface", "then press enter to", "start the calibration"}; 
 
@@ -77,6 +78,9 @@ public class  Definitions {
 
 /*
  * $Log: Definitions.java,v $
+ * Revision 1.8  2009/05/04 15:15:17  mahanja
+ * Ai is mostly implemented but is still throwing errors everywhere!
+ *
  * Revision 1.7  2009/04/29 19:08:45  stollf06
  * better handling of next junction and actualjunction
  *

@@ -1,13 +1,14 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/Task.java,v 1.1 2009/04/29 19:01:23 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/Task.java,v 1.2 2009/05/04 15:15:17 mahanja Exp $
 
 package ai;
 
 import java.util.Vector;
 
 import object.Position;
+import tool.MyEnumeration;
 
 public class Task {
-	protected Vector positions;
+	protected MyEnumeration positions;
 	protected int mode;
 	
 	/**
@@ -16,7 +17,7 @@ public class Task {
 	 * @param mode the mode of this task
 	 */
 	public Task(Vector positions, int mode) {
-		this.positions = positions;
+		this.positions = new MyEnumeration(positions);
 		this.mode = mode;
 	}
 	
@@ -25,7 +26,7 @@ public class Task {
 	 * @return
 	 */
 	public boolean hasNextPosition() {
-		return positions.size() != 0;
+		return positions.hasMoreElements();
 	}
 	
 	/**
@@ -33,7 +34,7 @@ public class Task {
 	 * @return the next position to go to.
 	 */
 	public Position nextPosition() {
-		return (Position) positions.remove(0);
+		return (Position) positions.nextElement();
 	}
 	
 	/**
@@ -48,6 +49,9 @@ public class Task {
 
 /*
  * $Log: Task.java,v $
+ * Revision 1.2  2009/05/04 15:15:17  mahanja
+ * Ai is mostly implemented but is still throwing errors everywhere!
+ *
  * Revision 1.1  2009/04/29 19:01:23  mahanja
  * The AI is near to be complete. Never tested yet!
  *

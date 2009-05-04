@@ -1,12 +1,19 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.2 2009/04/29 19:01:23 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.3 2009/05/04 15:15:17 mahanja Exp $
 package ai;
 
 import java.util.Vector;
 
+import lejos.nxt.Button;
+
+import com.sun.xml.internal.fastinfoset.stax.events.StartElementEvent;
+
+import object.Direction;
 import object.Grid;
 import object.Junction;
+import object.Position;
 import object.Robot;
 import tool.Console;
+import action.Eye;
 import action.Motion;
 import def.Calibration;
 import def.Definitions;
@@ -16,40 +23,90 @@ public class AI {
 	public static final int SEARCH_MODE = 1;   // field size known, searching objs by random
 	public static final int GOHELP_MODE = 2;   // on the way to help to the other 
 	public static final int TIDY_MODE = 3;     // bringing an obj to my home base 
-	public static final int SEAKWAY_MODE = 4;  // if seaking a way to bring home common
+	public static final int SEEKWAY_MODE = 4;  // if seaking a way to bring home common
 	public static final int FINISHED_MODE = 5; // all work is done
 	
 	private Motion motion;
 	private Grid grid;
 	private Robot robo;
 	protected int mode;
+	private Eye eye;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args){
-		int mode = DISCOVER_MODE;	// ever the initial mode
-		
 		Calibration calib = new Calibration();
 		Console.println("calibration done");
 		Definitions.wayFinderOn=true;//TODO delete, just for debugging
 		Definitions defs = Definitions.initInstance(Definitions.MASTER);//TODO change here
 		Definitions.pilot.setSpeed(300);
-		AI ki = new AI();
-		ki.searchMode();
+		AI ai = new AI();
+		ai.setMode(DISCOVER_MODE);
+		ai.run();
+		//ki.searchMode();
 	}
 	
 	public AI(){
 		grid = Grid.getInstance();
 		robo = new Robot(grid);
 		motion = new Motion(robo, grid);
-		Console.println("KI init");
+		eye = new Eye();
+		Console.println("Ai init");
 		
+	}
+
+	public void run() {
+		Task task = null,
+	      oldtask = null;
+		
+		while ((task = whatToDo(oldtask)) != null) {
+			
+			Console.println(" - NEXT - ");
+			Button.waitForPress();
+			if (!task.hasNextPosition())
+				continue; // a kind of busy waiting 
+			Console.println("1");
+			Button.waitForPress();
+			Position nextP = task.nextPosition();
+			Console.print("-2");
+			Button.waitForPress();
+			// turn around
+			Position inFront = grid.getNextProjectedPosition(robo);
+			Console.print("-3");
+			Button.waitForPress();
+			if (robo.getMyActualPosition() == null)
+				Console.print("NULL");
+			else
+				Console.print("OKAY");
+			
+			grid.getRelativePositionLeft(robo);
+			Console.print("COOOOL");
+			Button.waitForPress();
+			if (nextP != inFront)
+				if (nextP.equals(grid.getRelativePositionLeft(robo))) {
+					motion.turn(true);
+				} else if (nextP.equals(grid.getRelativePositionRight(robo))) {
+					motion.turn(false);
+				} else {
+					motion.turn(true); motion.turn(true);
+				}
+			Console.print("-4");
+			Button.waitForPress();
+			// go
+			motion.goToNextJunction();
+			oldtask = task;
+			Console.print("-5");
+			Button.waitForPress();
+			grid.setJunction(new Junction(robo.getMyActualPosition(), eye.getType()));
+		}
+		Console.println(" - FIN - ");
+		Button.waitForPress();
 	}
 	
 	/**
 	 * search for objects on the grid (go forward until there is no way, turn right/left 2 times)
-	 */
+	 * /
 	public void searchMode(){
 		boolean isLeft = false;
 		//int j=0;
@@ -66,7 +123,7 @@ public class AI {
 			motion.turn(isLeft);
 			isLeft = !isLeft;
 		}
-	}
+	}*/
 	
 	//-------------------------------------------------
 	
@@ -85,63 +142,119 @@ public class AI {
 	 */
 	public Task whatToDo(Task oldTask) {
 		// if the task can not be broken up
-		if (!oldTask.isBreakable())
-			return oldTask;
+	Console.println("projected1");
+	Button.waitForPress();
+
+		if (oldTask != null)
+			if (!oldTask.isBreakable() && oldTask.hasNextPosition())
+				return oldTask;
+		
+		// oldTask seems to be finished, create a new one.
+		// update mode
+		if (mode != SEEKWAY_MODE && grid.isGridSizeKnown()) {
+			setMode(SEARCH_MODE);
+		} else {
+			setMode(DISCOVER_MODE);
+		}
 		
 		// size of the grid is unknown
 		if (mode == DISCOVER_MODE) {
+			Console.println("M:Discover");
+			Button.waitForPress();
+			Console.println("T:"+grid.getJunction(robo.getMyActualPosition()).getType());
+			Button.waitForPress();
 			// discovering an empty or myhomebase junction
-			if (robo.getMyActualJunction().getType() == Junction.EMPTY ||
-				robo.getMyActualJunction().getType() == Junction.HOME_BASE) {
+			if (grid.getJunction(robo.getMyActualPosition()).getType() == Junction.EMPTY |
+				grid.getJunction(robo.getMyActualPosition()).getType() == Junction.HOME_BASE) {
 				Vector v = new Vector(1);
-				v.addElement(grid.getNextProjectedJunction(robo));
+				if (grid.getJunction(robo.getMyActualPosition()).getType() == Junction.HOME_BASE &&
+					robo.getOrientation() == Direction.SOUTH) { // looking towards homebase
+					motion.turn(true);motion.turn(true);
+				}       // turn around
+				v.addElement(grid.getNextProjectedPosition(robo));
 				return new Task(v, mode);
+			}
+		}
+		/**
+		if (mode == DISCOVER_MODE || mode == SEARCH_MODE || mode == SEEKWAY_MODE) {
 			// found an obj belonging to me
-			} else if ((robo.getMyActualJunction().getType() == Junction.MASTER_OBJ 
-					    && Definitions.getInstance().myName == Definitions.MASTER) ||
-					   (robo.getMyActualJunction().getType() == Junction.SLAVE_OBJ 
-						&& Definitions.getInstance().myName == Definitions.SLAVE)) {
+			if (((grid.getJunction(robo.getMyActualPosition()).getType() == Junction.MASTER_OBJ) &&
+			    Definitions.getInstance().myName == Definitions.MASTER) ||
+			    ((grid.getJunction(robo.getMyActualPosition()).getType() == Junction.SLAVE_OBJ) &&
+			    Definitions.getInstance().myName == Definitions.SLAVE)) {
+				
 				setMode(TIDY_MODE);
 				Vector v = grid.getAWayBackHome(robo);
 				return new Task(v, mode);
-			} /* obj not for me */
+			} // obj not for me
 		// size is known but not all junctions
-		} else if (mode == SEARCH_MODE) {
+		}
+		if (mode == SEARCH_MODE) {
+			Vector v = null; Position p = null;
 			// no cluttered obj known
-			if (grid.nothingElseThanSearching()) {
+			if (grid.nothingElseThanSearching()) { // does not include common obj
 				if (oldTask.hasNextPosition())
 					return oldTask; // old task not yet finished
 				else
 					return new Task(grid.getAWayToNextUnknown(robo), SEARCH_MODE); // need a new task
-			// there is something to do
-			} else {
-				Vector v = grid.getAWayToNextKnown(robo); // an obj concerning to me or a common one
+			// there is an obj for me to tidy
+			} else if (grid.isThereAnObjectForMe()) {
+				v = grid.getAWayToNextKnownUncommon(robo); // an obj concerning to me or a common one
 				
-				if (((Junction)v.elementAt(v.size()-1)).getType() == Junction.MASTER_OBJ ||
-					((Junction)v.elementAt(v.size()-1)).getType() == Junction.SLAVE_OBJ)
+				//if (((Junction)v.elementAt(v.size()-1)).getType() == Junction.MASTER_OBJ ||
+					//((Junction)v.elementAt(v.size()-1)).getType() == Junction.SLAVE_OBJ)
 					setMode(TIDY_MODE);
-				else
-					setMode(SEAKWAY_MODE);
+				//else
+					
+					// wenn er t orientation nit kenn, gihter drumum
+					// wennersa kennt u de wäg frii isch stihter vorhäre -> det bruuchts näi no eppis alla a nüa modus
+					// we de wäg nit frii isch, de suechterne...
+			// there is only a common to tidy
+			} else if ((p = grid.getNextCommonObj()) != null) {
+				/*if (!grid.isCommonObjOrientationKnown(p)) {
+					v = grid.getAWayAround(p);
+					setMode(SEEKWAY_MODE);
+				}
 				
-				return new Task(v, mode);
+				/*
+				if (!grid.isCommonObjOrientationKnown(p)) {
+					v = grid.getAWayAround(p);
+					setMode(SEEKWAY_MODE);
+				} else (!grid.isCommonObjWayBackPossible(p)) {
+					v = grid.exploreCommonObjWayBackHome(robot);
+					setMode(SEEKWAY_MODE);
+				} else (!grid.readyToPickUpCommonObj(robo, p)) {
+					v = grid.getAWayToNextCommonObj(robo, p);
+				} else { // all ok for colaboration
+					colaborate();
+				}* /
 			}
+			
+			return new Task(v, mode);
 		} else if (grid.nothingMoreToDo()) {
-			if (robo.getMyActualJunction().equals(robo.getHomeBase())) {
+			if (grid.getJunction(robo.getMyActualPosition()).equals(robo.getHomeBase())) {
 				setMode(FINISHED_MODE);
 				return new Task(new Vector(), mode);
 			} else {
 				return new Task(grid.getAWayBackHome(robo), mode);
 			}
 		}
-		
+		*/
 		// if reached the following lines it is a bug!
 		Console.println("E: no task def");
 		return null;
+	}
+	
+	public void colaborate() {
+		Console.println("COLABORATE...");
 	}
 }
 
 /*
  * $Log: AI.java,v $
+ * Revision 1.3  2009/05/04 15:15:17  mahanja
+ * Ai is mostly implemented but is still throwing errors everywhere!
+ *
  * Revision 1.2  2009/04/29 19:01:23  mahanja
  * The AI is near to be complete. Never tested yet!
  *

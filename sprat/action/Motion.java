@@ -1,10 +1,11 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.5 2009/04/29 16:06:51 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.6 2009/05/04 15:15:17 mahanja Exp $
 
 package action;
 
 import object.Direction;
 import object.Grid;
 import object.Junction;
+import object.Position;
 import object.Robot;
 import tool.Console;
 import def.Definitions;
@@ -82,25 +83,31 @@ public class Motion {
 	}
 
 	public boolean goToNextJunction(){
-		//Button.waitForPress();
-		//reservate the path
-		robo.setMyNextJunction(grid.getNextProjectedJunction(robo));
-		//Console.println("projected");
-		//Button.waitForPress();
+		Position actualP = robo.getMyActualPosition();
+		Position nextP = grid.getNextProjectedPosition(robo);
+		
+		//reserve the path
+		robo.setMyNextPosition(nextP);   //TODO:   <-- ask other !!!!!
+
+
 		float distanceToGo = Definitions.distBtwnJunct
 				+ Definitions.junctionSize;
+		// go to
 		Definitions.pilot.travel(distanceToGo / 2);
+		
+		// out of grid
 		if (!isThereAWay()) {
 			//Console.println("no way found");
 			//Button.waitForPress();
 			Definitions.pilot.travel(-distanceToGo / 2);
 			//change the path
-			robo.setMyNextJunction(robo.getMyActualJunction());
+			//robo.setMyNextPosition(robo.getMyActualPosition());
+			robo.setMyActualPosition(actualP);
 			return false;
 		}
+		// all ok
 		Definitions.pilot.travel(distanceToGo / 2);
-		robo.setMyActualJunction(robo.getMyNextJunction());
-		robo.setMyNextJunction(grid.getNextProjectedJunction(robo));
+		robo.setMyActualPosition(nextP);
 		return true;
 	}
 
@@ -161,6 +168,9 @@ public class Motion {
 }
 /*
  * $Log: Motion.java,v $
+ * Revision 1.6  2009/05/04 15:15:17  mahanja
+ * Ai is mostly implemented but is still throwing errors everywhere!
+ *
  * Revision 1.5  2009/04/29 16:06:51  stollf06
  * better handling of next junction and actualjunction
  *
