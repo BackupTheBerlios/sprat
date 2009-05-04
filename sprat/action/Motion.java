@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.6 2009/05/04 15:15:17 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.7 2009/05/04 15:34:05 mahanja Exp $
 
 package action;
 
@@ -89,9 +89,8 @@ public class Motion {
 		//reserve the path
 		robo.setMyNextPosition(nextP);   //TODO:   <-- ask other !!!!!
 
-
 		float distanceToGo = Definitions.distBtwnJunct
-				+ Definitions.junctionSize;
+							 + Definitions.junctionSize;
 		// go to
 		Definitions.pilot.travel(distanceToGo / 2);
 		
@@ -168,6 +167,9 @@ public class Motion {
 }
 /*
  * $Log: Motion.java,v $
+ * Revision 1.7  2009/05/04 15:34:05  mahanja
+ * It compiles and the robot walks to somewhere
+ *
  * Revision 1.6  2009/05/04 15:15:17  mahanja
  * Ai is mostly implemented but is still throwing errors everywhere!
  *

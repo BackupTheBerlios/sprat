@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.3 2009/05/04 15:15:17 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.4 2009/05/04 15:34:06 mahanja Exp $
 package ai;
 
 import java.util.Vector;
@@ -49,7 +49,7 @@ public class AI {
 	
 	public AI(){
 		grid = Grid.getInstance();
-		robo = new Robot(grid);
+		robo = Robot.initInstance(grid);
 		motion = new Motion(robo, grid);
 		eye = new Eye();
 		Console.println("Ai init");
@@ -252,6 +252,9 @@ public class AI {
 
 /*
  * $Log: AI.java,v $
+ * Revision 1.4  2009/05/04 15:34:06  mahanja
+ * It compiles and the robot walks to somewhere
+ *
  * Revision 1.3  2009/05/04 15:15:17  mahanja
  * Ai is mostly implemented but is still throwing errors everywhere!
  *

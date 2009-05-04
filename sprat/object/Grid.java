@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.5 2009/05/04 15:15:17 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.6 2009/05/04 15:34:05 mahanja Exp $
 package object;
 
 import java.util.Enumeration;
@@ -310,50 +310,46 @@ public class Grid {
 		return true;
 	}
 
+	/**
+	 * Returns the theoretical left pos, the pos is not validated. Means
+	 * probably the returned pos is outside the grid
+	 * @param robo the robot from which to look
+	 * @return the position on the left hand side of the given robot
+	 */
 	public Position getRelativePositionLeft(Robot robo) {
 		if (robo.getOrientation() == Direction.NORTH)
-			return ((Junction)grid.get(
-				new Position(robo.getMyActualPosition().getX()-1,
-				             robo.getMyActualPosition().getY()
-				             ))).getPosition();
+			return new Position(robo.getMyActualPosition().getX()-1,
+				             	robo.getMyActualPosition().getY());
 		else if (robo.getOrientation() == Direction.WEST)
-			return ((Junction)grid.get(
-				new Position(robo.getMyActualPosition().getX(),
-				             robo.getMyActualPosition().getY()-1
-				             ))).getPosition();
+			return new Position(robo.getMyActualPosition().getX(),
+				                robo.getMyActualPosition().getY()-1);
 		else if (robo.getOrientation() == Direction.EAST)
-			return ((Junction)grid.get(
-				new Position(robo.getMyActualPosition().getX(),
-				             robo.getMyActualPosition().getY()+1
-				             ))).getPosition();
+			return new Position(robo.getMyActualPosition().getX(),
+				                robo.getMyActualPosition().getY()+1);
 		else //if (robo.getOrientation() == Direction.SOUTH)
-			return ((Junction)grid.get(
-				new Position(robo.getMyActualPosition().getX()+1,
-				             robo.getMyActualPosition().getY()
-				             ))).getPosition();
+			return new Position(robo.getMyActualPosition().getX()+1,
+				                robo.getMyActualPosition().getY());
 	}
 
+	/**
+	 * Returns the theoretical right pos, the pos is not validated. Means
+	 * probably the returned pos is outside the grid
+	 * @param robo the robot from which to look
+	 * @return the position on the right hand side of the given robot
+	 */
 	public Position getRelativePositionRight(Robot robo) {
 		if (robo.getOrientation() == Direction.NORTH)
-			return ((Junction)grid.get(
-				new Position(robo.getMyActualPosition().getX()+1,
-				             robo.getMyActualPosition().getY()
-				             ))).getPosition();
+			return new Position(robo.getMyActualPosition().getX()+1,
+				                robo.getMyActualPosition().getY());
 		else if (robo.getOrientation() == Direction.WEST)
-			return ((Junction)grid.get(
-				new Position(robo.getMyActualPosition().getX(),
-				             robo.getMyActualPosition().getY()+1
-				             ))).getPosition();
+			return new Position(robo.getMyActualPosition().getX(),
+				                robo.getMyActualPosition().getY()+1);
 		else if (robo.getOrientation() == Direction.EAST)
-			return ((Junction)grid.get(
-				new Position(robo.getMyActualPosition().getX(),
-				             robo.getMyActualPosition().getY()-1
-				             ))).getPosition();
+			return new Position(robo.getMyActualPosition().getX(),
+				                robo.getMyActualPosition().getY()-1);
 		else //if (robo.getOrientation() == Direction.SOUTH)
-			return ((Junction)grid.get(
-				new Position(robo.getMyActualPosition().getX()-1,
-				             robo.getMyActualPosition().getY()
-				             ))).getPosition();
+			return new Position(robo.getMyActualPosition().getX()-1,
+				                robo.getMyActualPosition().getY());
 	}
 	/**
 	 * This subclass provides the method getWay which finds a way from a start
@@ -549,6 +545,9 @@ public class Grid {
 }
 /*
  * $Log: Grid.java,v $
+ * Revision 1.6  2009/05/04 15:34:05  mahanja
+ * It compiles and the robot walks to somewhere
+ *
  * Revision 1.5  2009/05/04 15:15:17  mahanja
  * Ai is mostly implemented but is still throwing errors everywhere!
  *
