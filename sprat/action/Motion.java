@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.7 2009/05/04 15:34:05 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.8 2009/05/04 15:39:19 stollf06 Exp $
 
 package action;
 
@@ -131,6 +131,29 @@ public class Motion {
 		Definitions.pilot.travel(-Definitions.distBtwnLsWheel);
 	}
 	
+	public void turnRound(boolean isLeft){
+		Definitions.pilot.travel(Definitions.distBtwnLsWheel);
+		robo.changeOrientation(isLeft);
+		float radius = Definitions.distBtwnJunct+Definitions.junctionSize;
+		if(isLeft){
+			Definitions.pilot.turn(radius, Definitions.leftJunctAngle);
+		}else{
+			Definitions.pilot.turn(radius, Definitions.rightJunctAngle);
+		}
+		Definitions.pilot.travel(-Definitions.distBtwnLsWheel);
+	}
+	
+	public void turnRoundBackwards(boolean isLeft){
+		Definitions.pilot.travel(-Definitions.distBtwnLsWheel);
+		robo.changeOrientation(!isLeft);
+		float radius = Definitions.distBtwnJunct+Definitions.junctionSize;
+		if(isLeft){
+			Definitions.pilot.turn(-radius, Definitions.leftJunctAngle);
+		}else{
+			Definitions.pilot.turn(-radius, Definitions.rightJunctAngle);
+		}
+		Definitions.pilot.travel(-Definitions.distBtwnLsWheel);
+	}
 
 	public void directionCorrection() {
 		Definitions.pilot.rotate(-Definitions.corrTestAngle);
@@ -167,6 +190,9 @@ public class Motion {
 }
 /*
  * $Log: Motion.java,v $
+ * Revision 1.8  2009/05/04 15:39:19  stollf06
+ * with the motions for the slave robot
+ *
  * Revision 1.7  2009/05/04 15:34:05  mahanja
  * It compiles and the robot walks to somewhere
  *
