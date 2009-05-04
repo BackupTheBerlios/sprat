@@ -1,12 +1,9 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.4 2009/05/04 15:34:06 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.5 2009/05/04 15:40:41 stollf06 Exp $
 package ai;
 
 import java.util.Vector;
 
 import lejos.nxt.Button;
-
-import com.sun.xml.internal.fastinfoset.stax.events.StartElementEvent;
-
 import object.Direction;
 import object.Grid;
 import object.Junction;
@@ -252,6 +249,9 @@ public class AI {
 
 /*
  * $Log: AI.java,v $
+ * Revision 1.5  2009/05/04 15:40:41  stollf06
+ * took out a wrong import
+ *
  * Revision 1.4  2009/05/04 15:34:06  mahanja
  * It compiles and the robot walks to somewhere
  *
