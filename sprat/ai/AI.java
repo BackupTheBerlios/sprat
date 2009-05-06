@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.8 2009/05/06 19:51:03 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.9 2009/05/06 20:05:10 mahanja Exp $
 package ai;
 
 import java.util.Vector;
@@ -21,18 +21,18 @@ import def.Definitions;
 import ai.Task;
 
 public class AI {
-	public static final int DISCOVER_MODE = 0; // if field size isn't known
+	/*public static final int DISCOVER_MODE = 0; // if field size isn't known
 	public static final int SEARCH_MODE = 1;   // field size known, searching objs by random
 	public static final int GOHELP_MODE = 2;   // on the way to help to the other 
 	public static final int TIDY_MODE = 3;     // bringing an obj to my home base 
 	public static final int SEEKWAY_MODE = 4;  // if seaking a way to bring home common
-	public static final int FINISHED_MODE = 5; // all work is done
+	public static final int FINISHED_MODE = 5; // all work is done*/
 	
 	private Motion motion;
 	private Grid grid;
 	private Robot robo;
 	protected int mode;
-	private Eye eye;
+	//private Eye eye;
 
 	/**
 	 * @param args
@@ -158,6 +158,9 @@ Button.waitForPress();
 
 /*
  * $Log: AI.java,v $
+ * Revision 1.9  2009/05/06 20:05:10  mahanja
+ * Commented out some unused methods
+ *
  * Revision 1.8  2009/05/06 19:51:03  mahanja
  * It loads an obj very well. but somewhere before unloading is a bug inside.
  *

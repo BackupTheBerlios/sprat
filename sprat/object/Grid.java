@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.9 2009/05/06 19:51:03 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.10 2009/05/06 20:05:09 mahanja Exp $
 package object;
 
 import java.util.Enumeration;
@@ -142,7 +142,6 @@ public class Grid {
 
 		return array;
 	}
-	
 
 	/**
 	 * True if there is no known uncommon object to process
@@ -636,6 +635,9 @@ public class Grid {
 }
 /*
  * $Log: Grid.java,v $
+ * Revision 1.10  2009/05/06 20:05:09  mahanja
+ * Commented out some unused methods
+ *
  * Revision 1.9  2009/05/06 19:51:03  mahanja
  * It loads an obj very well. but somewhere before unloading is a bug inside.
  *
