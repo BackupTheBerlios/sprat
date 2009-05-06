@@ -1,17 +1,22 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.5 2009/04/29 19:08:45 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.6 2009/05/06 17:23:18 stollf06 Exp $
 
 package demo;
 
 import object.Grid;
+import object.Junction;
 import object.Robot;
+import tool.Console;
+import action.Eye;
+import action.Forklift;
 import action.Motion;
+import ai.AI;
 import def.Calibration;
 import def.Definitions;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
 public class Demo {
-
+	static Definitions defs;
 	/**
 	 * @param args
 	 */
@@ -19,6 +24,14 @@ public class Demo {
 		Demo demo = new Demo();
 		//demo.twoStepSquare();
 		//demo.calibrationTest();
+		
+		//demo.turnRadiusTest();
+		
+		Calibration calib = new Calibration();
+		Console.println("calibration done");
+		//Definitions.wayFinderOn=true;//TODO delete, just for debugging
+		defs = Definitions.initInstance(Definitions.MASTER);//TODO change here
+		Definitions.pilot.setSpeed(300);
 		demo.pathFinding();
 	}
 
@@ -35,19 +48,48 @@ public class Demo {
 	}*/
 	
 	public void pathFinding(){
-		calibrationTest();
-		Definitions.wayFinderOn=true;
+		//calibrationTest();
+		//Definitions.wayFinderOn=true;
 		Grid grid = Grid.getInstance();
 		Robot robo =Robot.initInstance(grid);
 		Motion motion = new Motion(robo, grid);
-
-		
+		//Eye e = new Eye();
+		Forklift forklift = new Forklift();
+		//forklift.down();
 		for (int i = 0; i < 4; i++) {
-			while(motion.goToNextJunction()){
-				
+			while(motion.goToNextJunction(false)){
+				/*int  junct = Eye.getType();
+				Console.println("junct "+junct);
+				if(defs.isMaster){
+					if(junct==Junction.MASTER_OBJ){
+						//this is my object
+						forklift.up();
+						Console.println("my object detected");
+					}else if(junct==Junction.SLAVE_OBJ){
+						//not my object
+						motion.goBackOneJunction();
+						motion.turn(false);
+						Console.println("other object");
+					}
+				}else{
+					if(junct==Junction.SLAVE_OBJ){
+						//this is my object
+						forklift.up();
+						Console.println("my object detected");
+					}else if(junct==Junction.SLAVE_OBJ){
+						//not my object
+						motion.goBackOneJunction();
+						motion.turn(false);
+						Console.println("other object");
+					}
+				}*/
+				Console.println("go next junction");
+
 			}
 			motion.turn(false);
 		}
+		forklift.down();
+		Definitions.pilot.travel(-20);
 	}
 	
 	public void calibrationTest(){
@@ -62,10 +104,35 @@ public class Demo {
 		LCD.clearDisplay();
 		
 	}
+	
+	public void turnRadiusTest(){
+		
+		boolean isLeft = true;
+		float radius = Definitions.distBtwnJunct+Definitions.junctionSize;
+		if(isLeft){
+			Definitions.pilot.turn(-radius, 90);
+		}else{
+			Definitions.pilot.turn(radius, 90 );
+		}
+		Definitions.pilot.travel(-Definitions.distBtwnLsWheel);
+		Button.waitForPress();
+		Definitions.pilot.travel(Definitions.distBtwnLsWheel);
+		
+		radius = Definitions.distBtwnJunct+Definitions.junctionSize;
+		if(isLeft){
+			Definitions.pilot.turn(-radius, Definitions.leftJunctAngle);
+		}else{
+			Definitions.pilot.turn(-radius, Definitions.rightJunctAngle);
+		}
+		Definitions.pilot.travel(-Definitions.distBtwnLsWheel);
+	}
 
 }
 /*
  * $Log: Demo.java,v $
+ * Revision 1.6  2009/05/06 17:23:18  stollf06
+ * updated demo
+ *
  * Revision 1.5  2009/04/29 19:08:45  stollf06
  * better handling of next junction and actualjunction
  *
