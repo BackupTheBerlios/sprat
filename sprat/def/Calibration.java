@@ -1,11 +1,21 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.3 2009/04/27 19:53:55 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.4 2009/05/06 17:22:49 stollf06 Exp $
 
 package def;
 
+import tool.Console;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
 public class Calibration {
+	private  final String[] calibJunction = {"put the light sensor", "on the junction", "then press enter to", "start the calibration"}; 
+
+	private  final String[] calibLine = {"put the light sensor", "on the line", "then press enter to", "start the calibration"}; 
+	
+	private  final String[] calibMyObject = {"put the light sensor", "on the my object", "then press enter to", "start the calibration"}; 
+	
+	private  final String[] calibOtherRobotObject = {"put the light sensor", "on the other robots Object", "then press enter to", "start the calibration"}; 
+	
+	private  final String[] calibCommonObject = {"put the light sensor", "on the common object", "then press enter to", "start the calibration"}; 
 	
 	public int whiteGround;
 	/**
@@ -17,15 +27,14 @@ public class Calibration {
 	public Calibration(){
 		//Definitions def = Definitions.getInstance();
 		BrightnessRange objBR;
-		//white paper
-		//setDisplay(def.calibWhitePaper);
-		//objBR = setBrightRange();
-		//objBR.max += Definitions.brightTolerance;
-		//objBR.min -= Definitions.brightTolerance;
-		//Definitions.colWhiteGround = objBR;
+		setDisplay(calibJunction);
+		objBR = setBrightRange();
+		objBR.max += Definitions.brightTolerance;
+		objBR.min -= Definitions.brightTolerance;
+		Definitions.colJunction = objBR;
 		
 		//line
-		setDisplay(Definitions.calibLine);
+		setDisplay(calibLine);
 		objBR = setBrightRange();
 		objBR.max += Definitions.brightTolerance;
 		objBR.min -= Definitions.brightTolerance;
@@ -33,12 +42,18 @@ public class Calibration {
 		
 		
 		//own object
-		//setDisplay(Definitions.calibMyObject);
-		//Definitions.colMyObjects = setBrightRange();
+		setDisplay(calibMyObject);
+		objBR = setBrightRange();
+		objBR.max += Definitions.brightTolerance;
+		objBR.min -= Definitions.brightTolerance;
+		Definitions.colMyObjects = objBR; 
 		
 		//other object
-		//setDisplay(Definitions.calibOtherRobotObject);
-		//Definitions.colOtherRobotObjects = setBrightRange();
+		setDisplay(calibOtherRobotObject);
+		objBR = setBrightRange();
+		objBR.max += Definitions.brightTolerance;
+		objBR.min -= Definitions.brightTolerance;
+		Definitions.colOtherRobotObjects = objBR; 
 		
 		//commun object
 		//setDisplay(Definitions.calibCommonObject);
@@ -46,10 +61,10 @@ public class Calibration {
 		
 		
 		LCD.clear();
-		
-		LCD.drawString("line: ", 0, 1);
-		LCD.drawInt(Definitions.colLine.min, 7, 1);
-		LCD.drawInt(Definitions.colLine.max, 11, 1);
+		Console.println("Junction"+Definitions.colJunction.min+"/"+Definitions.colJunction.max);
+		Console.println("line: "+Definitions.colLine.min+"/"+Definitions.colLine.max);
+		Console.println("myObj: "+Definitions.colMyObjects.min+"/"+Definitions.colMyObjects.max);
+		Console.println("otherObj: "+Definitions.colOtherRobotObjects.min+"/"+Definitions.colOtherRobotObjects.max);
 		LCD.refresh();
 		Button.waitForPress();
 		LCD.clearDisplay();
@@ -103,6 +118,9 @@ public class Calibration {
 }
 /*
  * $Log: Calibration.java,v $
+ * Revision 1.4  2009/05/06 17:22:49  stollf06
+ * full calibration now
+ *
  * Revision 1.3  2009/04/27 19:53:55  stollf06
  * introduction of orientation on the grid
  *
