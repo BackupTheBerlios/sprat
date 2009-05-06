@@ -1,10 +1,7 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.9 2009/05/06 20:05:10 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.10 2009/05/06 20:11:49 stollf06 Exp $
 package ai;
 
 import java.util.Vector;
-
-import javax.crypto.spec.PSource;
-
 import lejos.nxt.Button;
 import object.Direction;
 import object.Grid;
@@ -158,6 +155,9 @@ Button.waitForPress();
 
 /*
  * $Log: AI.java,v $
+ * Revision 1.10  2009/05/06 20:11:49  stollf06
+ * imports
+ *
  * Revision 1.9  2009/05/06 20:05:10  mahanja
  * Commented out some unused methods
  *
