@@ -1,9 +1,10 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.6 2009/05/06 17:23:18 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.7 2009/05/06 22:26:12 stollf06 Exp $
 
 package demo;
 
 import object.Grid;
 import object.Junction;
+import object.Position;
 import object.Robot;
 import tool.Console;
 import action.Eye;
@@ -17,24 +18,42 @@ import lejos.nxt.LCD;
 
 public class Demo {
 	static Definitions defs;
+	private Grid grid;
+	private Robot robo;
+	private Motion motion;
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Demo demo = new Demo();
+		 
+		//Eye e = new Eye();
+		//Forklift forklift = new Forklift();
+		
 		//demo.twoStepSquare();
 		//demo.calibrationTest();
 		
 		//demo.turnRadiusTest();
 		
 		Calibration calib = new Calibration();
-		Console.println("calibration done");
-		//Definitions.wayFinderOn=true;//TODO delete, just for debugging
-		defs = Definitions.initInstance(Definitions.MASTER);//TODO change here
+		Definitions defs = Definitions.initInstance(Definitions.MASTER);
+		Demo demo = new Demo();
 		Definitions.pilot.setSpeed(300);
-		demo.pathFinding();
+		Position pos = new Position(3,3);
+		demo.pathFinding(pos);
+		//Console.println("calibration done");
+		//Definitions.wayFinderOn=true;//TODO delete, just for debugging
+		//defs = Definitions.initInstance(Definitions.MASTER);//TODO change here
+		//Definitions.pilot.setSpeed(300);
+		//Position pos = new Position(3,3);
+		//demo.pathFinding(pos);
 	}
 
+	public Demo(){
+		grid = Grid.getInstance();
+		 robo =Robot.initInstance(grid);
+		 motion = new Motion(robo, grid);
+	}
 	//stupid running in circle
 	/*
 	public void twoStepSquare() {
@@ -92,6 +111,62 @@ public class Demo {
 		Definitions.pilot.travel(-20);
 	}
 	
+	//TODO
+	
+	public void pathFinding(Position endP){
+		//grid.isWorkToDo();
+		Position actuP = robo.getMyActualPosition();
+		int xOff = endP.getX()-actuP.getX();
+		int yOff = endP.getY()-actuP.getY();
+		Console.println("entered("+actuP.getX()+"/"+actuP.getY()+")-("+endP.getX()+"/"+endP.getY()+")");
+		if(xOff == 0 && yOff == 0){
+			return;
+		}
+		//TODO richtig ausrichten
+		motion.goNJunctions(yOff);
+		yOff = endP.getY()-robo.getMyActualPosition().getY();
+		Console.println("new yOff"+yOff);
+		boolean leftTurns = false;
+		if(yOff != 0){//not there yet
+			findWayThroughWall(false);
+			pathFinding(endP);
+			return;
+		}
+		//TODO in die richtige richtung drehen
+		motion.turn(false);
+		motion.goNJunctions(xOff);
+		xOff = endP.getX()-robo.getMyActualPosition().getX();
+		if(xOff!=0){
+			findWayThroughWall(false);
+			pathFinding(endP);
+			return;
+		}
+	}
+	
+	private void findWayThroughWall(boolean leftTurns){
+		motion.turn(leftTurns);
+		Console.println("turned");
+		//as long as i can go right
+		while(motion.goToNextJunction(false)){
+			Console.println("went");
+			motion.turn(!leftTurns);
+			Console.println("turned");
+			if(motion.goToNextJunction(false)){
+				//it was able to pass the y wall
+				Console.println("went through");
+				return;//or break
+			}
+			motion.turn(leftTurns);
+			//Button.waitForPress();
+		}
+		motion.turn(!leftTurns);
+		findWayThroughWall(!leftTurns);
+		
+	}
+	
+	
+	
+	
 	public void calibrationTest(){
 		Calibration calib = new Calibration();
 		LCD.clear();
@@ -130,6 +205,9 @@ public class Demo {
 }
 /*
  * $Log: Demo.java,v $
+ * Revision 1.7  2009/05/06 22:26:12  stollf06
+ * example method to find a path
+ *
  * Revision 1.6  2009/05/06 17:23:18  stollf06
  * updated demo
  *
