@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Robot.java,v 1.4 2009/05/04 20:33:18 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Robot.java,v 1.5 2009/05/06 17:17:54 mahanja Exp $
 package object;
 
 import action.Eye;
@@ -49,15 +49,19 @@ public class Robot {
 	
 	public void changeOrientation(boolean isLeft){
 		if(isLeft){
-			orientation--;
-		}else{
+			//orientation--;
 			orientation++;
+		}else{
+			orientation--;
+			//orientation++;
 		}
 		if(orientation<0){
 			orientation = 3;
 		}else if(orientation >3){
 			orientation =0;
 		}
+		
+		Console.println("D:"+(new Direction(orientation).toString()));
 	}
 	
 	// GETTERS
@@ -107,6 +111,9 @@ public class Robot {
 }
 /*
  * $Log: Robot.java,v $
+ * Revision 1.5  2009/05/06 17:17:54  mahanja
+ * The Ai is written completely new. Objects were not yet gathered. Only the way to a unknown or my-obj will be found.
+ *
  * Revision 1.4  2009/05/04 20:33:18  mahanja
  * It searches a way (bug with second unknown field)
  *

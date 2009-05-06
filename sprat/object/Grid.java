@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.7 2009/05/04 20:33:18 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.8 2009/05/06 17:17:54 mahanja Exp $
 package object;
 
 import java.util.Enumeration;
@@ -16,8 +16,8 @@ public class Grid {
 	private static Grid instance = null;
 	Junction grid[][];
 	
-	private int gridSize = -1;
-	private boolean gridSizeIsKnown = false;
+	//private int gridSize = -1;
+	//private boolean gridSizeIsKnown = false;
 	
 	/**
 	 * The grid should be created after the initialization of master and slave.
@@ -51,20 +51,24 @@ public class Grid {
 	 * @param junct
 	 */
 	public void setJunction(Junction junct) {
-		if (junct.getType() == Junction.OUTSIDE) {
+		/*if (junct.getType() == Junction.OUTSIDE) {
 			setGridSize(junct.getPosition().getX() > junct.getPosition().getY() 
 						? junct.getPosition().getX() -1 : junct.getPosition().getY() -1);
-		} else {
+		} else {*/
+		if (junct.getType() != Junction.OUTSIDE) {
 			if (grid[junct.getPosition().getX()][junct.getPosition().getY()].getType() != Junction.HOME_BASE)
 				grid[junct.getPosition().getX()][junct.getPosition().getY()] = junct;
-printGrid();
 		}
+		
+		//printGrid();
 	}
 	
+	/*
 	private void setGridSize(int size) {
 		gridSize = size;
 		gridSizeIsKnown = true;
 	}
+	*/
 
 	/**
 	 * Get a junction object according to a position on the grid.
@@ -82,10 +86,10 @@ printGrid();
 	}
 
 	/**
-	 * gives the junction with all the possible information which the robot is
+	 * gives the Position with all the possible information which the robot is
 	 * facing
 	 * 
-	 * @return the faced junction
+	 * @return the faced Position
 	 */
 	public Position getNextProjectedPosition(Robot robo){
 		int orientation = robo.getOrientation();
@@ -93,20 +97,16 @@ printGrid();
 		Position actualPosition = robo.getMyActualPosition();
 		
 		int xOffset=0, yOffset = 0;
-		switch (orientation) {
-		case Direction.NORTH:
+		if (orientation == Direction.NORTH)
 			yOffset = 1;
-			break;
-		case Direction.WEST:
-			xOffset = 1;
-			break;
-		case Direction.SOUTH:
-			yOffset = -1;
-			break;
-		case Direction.EAST:
+		else if (orientation == Direction.WEST)
 			xOffset = -1;
-			break;
-		}
+		else if (orientation == Direction.SOUTH)
+			yOffset = -1;
+		else if (orientation == Direction.EAST)
+			xOffset = 1;
+		// else -> there is no other case!!!
+		
 		Position pos = new Position(actualPosition.getX()+xOffset, 
 				                    actualPosition.getY()+yOffset);
 		return pos;
@@ -116,16 +116,18 @@ printGrid();
 	 * Used by TaskManager to find a way back to homebase 
 	 * @param me the concerning robot
 	 * @return a vector of junctions representing a known way to homebase
-	 */
-	public Vector getAWayBackHome(Robot robot) {
+	 * /
+	public PathElement getAWayBackHome(Robot robot) {
 		BackTracker guide = new BackTracker(getMap());
-		return guide.getWay(robot.getMyActualPosition(),
+		return guide.findWay(robot.getMyActualPosition(),
 						    robot.getHomeBase());
-	}
+	}*/
 	
+	/*
 	public boolean isGridSizeKnown() {
 		return gridSizeIsKnown;
 	}
+	*/
 	
 	/**
 	 * Creates a 2D boolean map where true values are empty positions
@@ -146,7 +148,7 @@ printGrid();
 	/**
 	 * True if there is no known uncommon object to process
 	 * @return true if no known objects (concerning to this robot) on the grid
-	 */
+	 * /
 	public boolean nothingElseThanSearching() {
 		Position currP = new Position(-1, -1);
 		Junction currJ = null;
@@ -168,39 +170,66 @@ printGrid();
 			}
 		}
 		return true;
-	}
+	}*/
 
-	public Vector getAWayToNextUnknown(Robot robot) {
-//Console.println("W: X"+robot.getMyActualPosition().getX()+"-y"+robot.getMyActualPosition().getY());
-//	printGrid();
+	public PathElement getAWayToNextKnownUncommon(Robot robo) {
 		for (int x = 0; x < GRID_SIZE; x++) {
 			for (int y = 0; y < GRID_SIZE; y++) {
-//Console.println(grid[x][y].toString());
-//Button.waitForPress();
-				if (grid[x][y].getType() == Junction.UNKNOWN) {
-Console.println("UK@:"+grid[x][y].toString());
-Button.waitForPress();
-					boolean map[][] = getMap();
-					map[x][y] = true;	// there where we want to go must be enabled 
-					BackTracker guide = new BackTracker(map);
+				if (grid[x][y].getType() == Junction.MASTER_OBJ &&
+						Definitions.getInstance().myName.equals(Definitions.MASTER) ||
+					grid[x][y].getType() == Junction.SLAVE_OBJ &&
+						Definitions.getInstance().myName.equals(Definitions.SLAVE)) {		
 
-					guide.getWay(robot.getMyActualPosition(),
-								 new Position(x,y));
+					boolean map[][] = getMap();
+					map[x][y] = true;	// there where we want to go must be enabled
 					
-					Vector v = guide.getWay(robot.getMyActualPosition(),
-											grid[x][y].getPosition());
-					if (v == null) {
-//Console.println(".");
+					BackTracker guide = new BackTracker(map);
+					PathElement path = guide.findWay(robo.getMyActualPosition(), grid[x][y].getPosition());
+
+					if (path == null) {
 						continue;
 					}
-					return v;
+					
+					return path;
 				}
 			}
 		}
-		return new Vector();
+		return null;
 	}
 
-	public boolean nothingMoreToDo() {
+	public PathElement getAWayToNextUnknown(Robot robot) {
+		for (int x = 0; x < GRID_SIZE; x++) {
+			for (int y = 0; y < GRID_SIZE; y++) {
+				if (grid[x][y].getType() == Junction.UNKNOWN) {
+//Console.println("UK@:"+grid[x][y].toString());
+//Button.waitForPress();
+					boolean map[][] = getMap();
+					map[x][y] = true;	// there where we want to go must be enabled 
+					
+					BackTracker guide = new BackTracker(map);
+					PathElement path = guide.findWay(robot.getMyActualPosition(), grid[x][y].getPosition());
+
+					if (path == null) {
+//Console.println(" - NEXT - Continue");
+//Button.waitForPress();	
+
+						continue;
+					}
+//Console.println(" - NEXT - Path");
+//Button.waitForPress();	
+					
+//Console.println("UK@:"+grid[x][y].toString());
+//Button.waitForPress();
+					return path;
+				}
+			}
+		}
+//printGrid();
+//Button.waitForPress();
+		return null;
+	}
+
+	/*public boolean nothingMoreToDo() {
 		Position currP = new Position(-1, -1);
 		Junction currJ = null;
 		for (int x = 0; x < gridSize; x++) {
@@ -215,7 +244,7 @@ Button.waitForPress();
 			}
 		}
 		return true;
-	}
+	}*/
 
 	/**
 	 * returns a way to a known object. If there is no un-common obj and 
@@ -224,8 +253,8 @@ Button.waitForPress();
 	 * @see getAWayToNextUnknown(Robot)
 	 * @param robot used to determine the start position for the path
 	 * @return a path stored in a Vector.
-	 */
-	public Vector getAWayToNextKnownUncommon(Robot robot) {
+	 * /
+	public PathElement getAWayToNextKnownUncommon(Robot robot) {
 		Position currP = new Position(-1, -1);
 		Junction currJ = null;
 		BackTracker guide = new BackTracker(getMap());
@@ -249,18 +278,18 @@ Button.waitForPress();
 					} else {
 						return guide.getWay(robot.getMyActualJunction(), currJ.getPosition());
 					}
-				}*/
+				}* /
 			}
 		}
 		return null;
-	}
+	}*/
 	
 	/**
 	 * returns the orientation of the common obj at the given position
 	 * @param p the position where of the common obj of which we want to know the orientation.
-	 * @return Direction.XXX if the direction is known. Else null will be returned.
+	 * @return Direction.XX if the direction is known. Else null will be returned.
 	 * @see object.Direction
-	 */
+	 * /
 	private Direction getOrientation(Position p) {
 		// north
 		if (p.getY() + 1 < gridSize &&
@@ -281,12 +310,12 @@ Button.waitForPress();
 		// unknown
 		else
 			return null;
-	}
+	}*/
 
 	/**
 	 * Returns the position of the next common object.
 	 * @return the position of the next common object.
-	 */
+	 * /
 	public Position getNextCommonObj() {
 		Position currP = new Position(-1, -1);
 		Junction currJ = null;
@@ -301,9 +330,9 @@ Button.waitForPress();
 			}
 		}
 		return null;
-	}
+	}*/
 	
-	public boolean isThereAnObjectForMe() {
+	/*public boolean isThereAnObjectForMe() {
 		Position currP = new Position(-1, -1);
 		Junction currJ = null;
 		
@@ -323,13 +352,13 @@ Button.waitForPress();
 			}
 		}
 		return false;
-	}
+	}*/
 
-	public boolean isCommonObjOrientationKnown(Position p) {
+	/*public boolean isCommonObjOrientationKnown(Position p) {
 		if (getOrientation(p) == null)
 			return false;
 		return true;
-	}
+	}*/
 
 	/**
 	 * Returns the theoretical left pos, the pos is not validated. Means
@@ -372,6 +401,29 @@ Button.waitForPress();
 			return new Position(robo.getMyActualPosition().getX()-1,
 				                robo.getMyActualPosition().getY());
 	}
+	
+
+	/**
+	 * Returns the theoretical behind pos, the pos is not validated. Means
+	 * probably the returned pos is outside the grid
+	 * @param robo the robot from which to look
+	 * @return the position behind of the given robot
+	 */
+	public Position getRelativePositionBehind(Robot robo) {
+		if (robo.getOrientation() == Direction.NORTH)
+			return new Position(robo.getMyActualPosition().getX(),
+				                robo.getMyActualPosition().getY()-1);
+		else if (robo.getOrientation() == Direction.WEST)
+			return new Position(robo.getMyActualPosition().getX()+1,
+				                robo.getMyActualPosition().getY());
+		else if (robo.getOrientation() == Direction.EAST)
+			return new Position(robo.getMyActualPosition().getX()-1,
+				                robo.getMyActualPosition().getY());
+		else //if (robo.getOrientation() == Direction.SOUTH)
+			return new Position(robo.getMyActualPosition().getX(),
+				                robo.getMyActualPosition().getY()+1);
+	}
+	
 	/**
 	 * This subclass provides the method getWay which finds a way from a start
 	 * to an end point in a boolean array where the true values indicate valid 
@@ -380,263 +432,180 @@ Button.waitForPress();
 	 */
 	private class BackTracker {
 		
-		boolean[][] grid;
-		int gridSize;
+		boolean[][] map;
+		//PathElement shortest = null; 
 
 		/**
 		 * Instantiates a new BackTracker.
 		 * @param grid The true values indicate valid fields where the way can 
 		 * go over.
 		 */
-		public BackTracker(boolean[][] grid) {
-			this.grid = grid;
-			gridSize = grid.length;
+		public BackTracker(boolean[][] map) {
+			this.map = map;
 		}
 		
-		/**
-		 * Searches a way in the grid starting at startP and ending at endP.
-		 * The path will be the chain of Positions in the returned Vector. 
-		 * @param startP where to start the way
-		 * @param endP where the way ends
-		 * @return
-		 */
-		/*public Vector getWay(Position startP, Position endP) {
+		public boolean[][] getEmptyWay() {
 			boolean[][] way = new boolean[GRID_SIZE][GRID_SIZE];
-			way[startP.getX()][startP.getY()] = true;	// setting start point
-			if (getWay(way, startP.getX(), startP.getY(), endP.getX(), endP.getY()))
-				return convertToPath(way, startP, endP);
-			else
-				return null;
+			for (int x = 0; x < GRID_SIZE; x++)
+				for (int y = 0; y < GRID_SIZE; y++)
+					way[x][y] = false;
+			return way;
 		}
 		
-		/** 
-		 * Searches a way by exploiting the backtracking algorithm (recursive).
-		 * x, y = start point coordinate. xb, yb = target coordinate.
-		 * Way is a in-out-parameter.
-		 * Returns true if there is a way found.
-		 * * /
-		private boolean getWay(boolean[][] way, int x, int y, int xb, int yb) {
-			// reached the target
-			if (x == xb && y == yb)
-				return true;
+		public PathElement findWay(Position startP, Position endP) {
+			boolean[][] way = getEmptyWay();
+			//way[startP.getX()][startP.getY()] = true;
 			
-			// search in all cardinal directions
-			// SOUTH
-			if (y - 1 >= 0 && way[x][y-1] != true) {
-				way[x][y-1] = true;
-				if (getWay(way, x, y-1, xb, yb))
-					return true;
-				else
-					way[x][y-1] = false;	
-			}
-			// WEST
-			if (x - 1 >= 0 && way[x-1][y] != true) {
-				way[x-1][y] = true;
-				if (getWay(way, x-1, y, xb, yb))
-					return true;
-				else
-					way[x-1][y] = false;
-			}
-			// EAST
-			if (x + 1 < gridSize && way[x+1][y] != true) {
-				way[x+1][y] = true;
-				if (getWay(way, x+1, y, xb, yb))
-					return true;
-				else
-					way[x+1][y] = false;
-			}
-			// NORTH
-			if (y + 1 < gridSize && way[x][y+1] != true) {
-				way[x][y+1] = true;
-				if (getWay(way, x, y+1, xb, yb))
-					return true;
-				else
-					way[x][y+1] = false;
-			}
-			return false;	// should never occur!
-		}*/
-		
-		
-		
-		public Vector getWay(Position startP, Position endP) {
-			boolean[][] way = new boolean[GRID_SIZE][GRID_SIZE];
-			way[startP.getX()][startP.getY()] = true;	// setting start point
-			Vector v = new Vector();
-			getWay(v, way, startP.getX(), startP.getY(), endP.getX(), endP.getY());
-			return v;
-				//return convertToPath(way, startP, endP);
-			//else
-				//return null;
+			map[startP.getX()][startP.getY()] = true;	// setting start point
+			map[endP.getX()][endP.getY()] = true;		// enabling end point
+
+			PathElement startElt = new PathElement(startP);
+			
+			/*if (findWay(startElt, way, startP.getX(), startP.getY(), endP.getX(), endP.getY()))
+				return shortest;
+			else // no path found
+				return null;*/
+			PathElement path = findWay(startElt, way, endP.getX(), endP.getY());
+			if (path.hasNextElt())
+				return path.getNextElt();
+			return null;
 		}
 		
 		/** 
 		 * Searches a way by exploiting the backtracking algorithm (recursive).
 		 * x, y = start point coordinate. xb, yb = target coordinate.
-		 * Way is a in-out-parameter.
+		 * pe is a in-out-parameter.
 		 * Returns true if there is a way found.
 		 */
-		private boolean getWay(Vector v, boolean[][] way, int x, int y, int xb, int yb) {
+		private PathElement findWay(PathElement pe, boolean[][] way, int xb, int yb) {
+			int x = pe.getX(),
+			    y = pe.getY();
+			
 			// reached the target
 			if (x == xb && y == yb) {
-				v.addElement(new Position(xb,yb));
-				return true;
+				return pe;
 			}
+
+			
+			PathElement currentShortest = null;
+			boolean[][] currShortestWay = way;
 			
 			// search in all cardinal directions
 			// SOUTH
-			if (y - 1 >= 0 && way[x][y-1] != true) {
-				way[x][y-1] = true;
-				v.addElement(new Position(x,y-1));
-				if (getWay(v, way, x, y-1, xb, yb))
-					return true;
-				else {
-					v.removeElementAt(v.size()-1);
-					way[x][y-1] = false;	
+			if (y - 1 >= 0 && !way[x][y-1] && map[x][y-1]) {
+				boolean myWay[][] = way;
+				PathElement myPath = pe.getClone();
+				
+				myWay[x][y-1] = true;
+				myPath.setNextElt(new PathElement(x,y-1));
+				
+				PathElement foundPath = findWay(myPath.getNextElt(), myWay, xb, yb);
+//Console.println("a way - s"+foundPath.length());
+
+				if (currentShortest == null &&
+					foundPath != null &&
+					foundPath.getLast().getX() == xb && foundPath.getLast().getY() == yb) {
+						
+						currentShortest = foundPath;
+						currShortestWay = myWay;
+//Console.println("new way - s"+foundPath.length());
+				} else if (foundPath != null &&
+						   foundPath.getLast().getX() == xb && foundPath.getLast().getY() == yb &&
+						   foundPath.length() < currentShortest.length()) {
+					currentShortest = foundPath;
+					currShortestWay = myWay;
+//Console.println("shorter - s"+foundPath.length());
 				}
 			}
 			// WEST
-			if (x - 1 >= 0 && way[x-1][y] != true) {
-				way[x-1][y] = true;
-				v.addElement(new Position(x-1,y));
-				if (getWay(v, way, x-1, y, xb, yb))
-					return true;
-				else {
-					v.removeElementAt(v.size()-1);
-					way[x-1][y] = false;
+			if (x - 1 >= 0 && !way[x-1][y] && map[x-1][y]) {
+				boolean myWay[][] = way;
+				PathElement myPath = pe.getClone();
+				
+				myWay[x-1][y] = true;
+				myPath.setNextElt(new PathElement(x-1,y));
+				
+				PathElement foundPath = findWay(myPath.getNextElt(), myWay, xb, yb);
+//Console.println("a way - w"+foundPath.length());
+				
+				if (currentShortest == null &&
+					foundPath != null &&
+					foundPath.getLast().getX() == xb && foundPath.getLast().getY() == yb) {
+					
+					currentShortest = foundPath;
+					currShortestWay = myWay;
+//Console.println("new way - w"+foundPath.length());
+				} else if (foundPath != null &&
+						   foundPath.getLast().getX() == xb && foundPath.getLast().getY() == yb &&
+						   foundPath.length() < currentShortest.length()) {
+					currentShortest = foundPath;
+					currShortestWay = myWay;
+//Console.println("shorter - w"+foundPath.length());
 				}
 			}
 			// EAST
-			if (x + 1 < gridSize && way[x+1][y] != true) {
-				way[x+1][y] = true;
-				v.addElement(new Position(x+1,y));
-				if (getWay(v, way, x+1, y, xb, yb))
-					return true;
-				else {
-					v.removeElementAt(v.size()-1);
-					way[x+1][y] = false;
+			if (x + 1 < GRID_SIZE && !way[x+1][y] && map[x+1][y]) {
+				boolean myWay[][] = way;
+				PathElement myPath = pe.getClone();
+				
+				myWay[x+1][y] = true;
+				myPath.setNextElt(new PathElement(x+1,y));
+				
+				PathElement foundPath = findWay(myPath.getNextElt(), myWay, xb, yb);
+//Console.println("a way - e"+foundPath.length());
+				
+				if (currentShortest == null &&
+					foundPath != null &&
+					foundPath.getLast().getX() == xb && foundPath.getLast().getY() == yb) {
+						
+						currentShortest = foundPath;
+						currShortestWay = myWay;
+//Console.println("new way - e"+foundPath.length());
+				} else if (foundPath != null &&
+						   foundPath.getLast().getX() == xb && foundPath.getLast().getY() == yb &&
+						   foundPath.length() < currentShortest.length()) {
+					currentShortest = foundPath;
+					currShortestWay = myWay;
+//Console.println("shorter - e"+foundPath.length());
 				}
 			}
 			// NORTH
-			if (y + 1 < gridSize && way[x][y+1] != true) {
-				way[x][y+1] = true;
-				v.addElement(new Position(x,y+1));
-				if (getWay(v, way, x, y+1, xb, yb))
-					return true;
-				else {
-					v.removeElementAt(v.size()-1);
-					way[x][y+1] = false;
+			if (y + 1 < GRID_SIZE && !way[x][y+1] && map[x][y+1]) {
+				boolean myWay[][] = way;
+				PathElement myPath = pe.getClone();
+				
+				myWay[x][y+1] = true;
+				myPath.setNextElt(new PathElement(x,y+1));
+				
+				PathElement foundPath = findWay(myPath.getNextElt(), myWay, xb, yb);
+//Console.println("a way - n"+foundPath.length());
+				
+				if (currentShortest == null &&
+					foundPath != null &&
+					foundPath.getLast().getX() == xb && foundPath.getLast().getY() == yb) {
+						
+						currentShortest = foundPath;
+						currShortestWay = myWay;
+//Console.println("new way - n"+foundPath.length());
+				} else if (foundPath != null &&
+						   foundPath.getLast().getX() == xb && foundPath.getLast().getY() == yb &&
+						   foundPath.length() < currentShortest.length()) {
+					currentShortest = foundPath;
+					currShortestWay = myWay;
+//Console.println("shorter - n"+foundPath.length());
 				}
+				
+				// &&				   pe.getLast().getLast().getX() == xb && pe.getLast().getLast().getY() == yb &&				   foundPath.length() < pe.length()
 			}
-			return false;	// should never occur!
+			
+			if (currentShortest == null) 
+				return null;
+			
+			pe.setNextElt(currentShortest);
+			way = currShortestWay;
+			return pe;
 		}
 	}
-
-	/**
-	 * Return a chain of Positions indicating the way from the 
-	 * start position to the end position 
-	 * @param way the way is a boolean array, where the way is 
-	 * composed of true boolean values in a 2D array representing 
-	 * the grid
-	 * @param start the position where to start
-	 * @param end the position where to end
-	 * @return a chain of Positions indicating the way from the 
-	 * start position to the end position
-	 */
-	/*private Vector convertToPath(boolean[][] way, Position start, Position end) {
-		int currX = start.getX(),
-			currY = start.getY();
-		int lastPosX = currX,
-			lastPosY = currY;
-		Vector path = new Vector();
-		while (currX == end.getX() && currY == end.getY()) {
-			// go north
-			if (currY + 1 < gridSize &&
-					   way[currX][currY+1] &&
-					   currX != lastPosX &&
-					   currY + 1 != lastPosY) {
-				
-				path.addElement(new Position(currX, ++currY));
-			// go west
-			} else if (currX - 1 >= 0 &&
-					   way[currX-1][currY] &&
-					   currX - 1 != lastPosX &&
-					   currY != lastPosY) {
-
-				path.addElement(new Position(--currX, currY));
-
-			// go east
-			} else if (currX + 1 < gridSize &&
-					   way[currX+1][currY] &&
-					   currX + 1 != lastPosX &&
-					   currY != lastPosY) {
-				
-				path.addElement(new Position(++currX, currY));
-			
-			// go south
-			} else if (currY - 1 >= 0 &&
-				    way[currX][currY-1] &&
-				    currX != lastPosX &&
-				    currY - 1 != lastPosY) {
-				
-					path.addElement(new Position(currX, --currY));
-			}
-		}
-		return path;
-	}*/
-	
-	/**
-	 * This is not a Hashtable as it should be but simply an array. The size is
-	 * GRID_SIZE. The problem is, that the HashTable class of the environment does
-	 * not really work.
-	 * In fact this class extends Hashtable, but the leJOS implementation does not
-	 * return any value on the put method (sun impl. does return the given value).
-	 * This is the reason why this class does not "exteds Hashtable"... :(
-	 * 
-	 * @author greila06
-	 *
-	 * /
-	private class MyHashtable {
-		public static final int GRID_SIZE = 5;
-		Junction array[][] = new Junction[GRID_SIZE][GRID_SIZE];
-	
-		public Object get(Object aKey) {
-			if (aKey instanceof Position) {
-				Position p = (Position)aKey;
-				try {
-					return array[p.getX()][p.getY()];
-				} catch (ArrayIndexOutOfBoundsException aioobe) {
-					return new Junction(new Position(p.getX(), p.getY()), Junction.OUTSIDE);
-				}
-			} else return null;
-		}
-        
-		public Enumeration keys() {
-			MyEnumeration enum = new MyEnumeration();
-
-			for (int i = 0; i < GRID_SIZE; i++)
-				for (int j = 0; j < GRID_SIZE; j++)
-					enum.add(new Position(i, j));
-			return enum;
-		}
-		
-		// java.util.Hashtable implementation by sun returns the value...
-		public void put(Object aKey, Object aValue) {
-			try {
-				if (aKey instanceof Position &&
-					aValue instanceof Junction) {
-						Position p = (Position)aKey;
-						Junction j = (Junction)aValue;
-						//Console.println("x:"+p.getX() + "y:"+p.getY());
-						array[p.getX()][p.getY()] = j;
-				} else {
-					Console.println("E:MHTputtype");
-				}
-			} catch (ArrayIndexOutOfBoundsException aioobe) {
-				 Console.println("E:MHTputbounds");
-			}
-			//return aValue;
-		}
-	}*/
 	
 	public void printGrid() {
 		for (int y = 0; y < GRID_SIZE; y++) {
@@ -645,9 +614,31 @@ Button.waitForPress();
 				Console.print(""+grid[x][y].getTypeChar());
 		}
 	}
+
+	public boolean isWorkToDo() {
+		for (int y = 0; y < GRID_SIZE; y++) {
+			for (int x = 0; x < GRID_SIZE; x++) {
+				if (grid[x][y].getType() == Junction.COMMON_OBJ ||
+					grid[x][y].getType() == Junction.UNKNOWN) {
+					return true;
+				} else if (Definitions.getInstance().myName == Definitions.MASTER && 
+						   grid[x][y].getType() == Junction.MASTER_OBJ) {
+					return true;
+				} else if (Definitions.getInstance().myName == Definitions.SLAVE && 
+						   grid[x][y].getType() == Junction.SLAVE_OBJ) {
+					return true;
+				}
+		}	}
+		
+		return false;
+	}
+
 }
 /*
  * $Log: Grid.java,v $
+ * Revision 1.8  2009/05/06 17:17:54  mahanja
+ * The Ai is written completely new. Objects were not yet gathered. Only the way to a unknown or my-obj will be found.
+ *
  * Revision 1.7  2009/05/04 20:33:18  mahanja
  * It searches a way (bug with second unknown field)
  *

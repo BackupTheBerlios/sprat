@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Position.java,v 1.2 2009/04/29 19:01:23 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Position.java,v 1.3 2009/05/06 17:18:02 mahanja Exp $
 
 package object;
 
@@ -9,7 +9,8 @@ package object;
  * @author $Author: mahanja $
  */
 public class Position {
-	private int x, y;
+	protected int x;
+	protected int y;
 	
 	public Position(int x, int y) {
 		this.x = x;
@@ -44,6 +45,9 @@ public class Position {
 
 /*
  * $Log: Position.java,v $
+ * Revision 1.3  2009/05/06 17:18:02  mahanja
+ * The Ai is written completely new. Objects were not yet gathered. Only the way to a unknown or my-obj will be found.
+ *
  * Revision 1.2  2009/04/29 19:01:23  mahanja
  * The AI is near to be complete. Never tested yet!
  *

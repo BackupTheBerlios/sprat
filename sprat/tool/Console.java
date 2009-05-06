@@ -1,12 +1,12 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/tool/Console.java,v 1.1 2009/04/23 18:56:49 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/tool/Console.java,v 1.2 2009/05/06 17:17:54 mahanja Exp $
 package tool;
 
 import lejos.nxt.LCD;
 
 public class Console {
-	private static final int SIZE = 7;
+	private static final int SIZE = 8;
 	private static final int LAST = SIZE -1;
-	private static String[] output = new String[]{"","","","","","",""};
+	private static String[] output = new String[]{"","","","","","","",""};
 	
 	public static void println(String text) {
 		shiftAndAdd(text);
@@ -36,6 +36,9 @@ public class Console {
 
 /*
  * $Log: Console.java,v $
+ * Revision 1.2  2009/05/06 17:17:54  mahanja
+ * The Ai is written completely new. Objects were not yet gathered. Only the way to a unknown or my-obj will be found.
+ *
  * Revision 1.1  2009/04/23 18:56:49  mahanja
  * A console to write out strings in a console like matter
  *
