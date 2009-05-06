@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.9 2009/05/04 20:33:19 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.10 2009/05/06 17:44:37 stollf06 Exp $
 
 package def;
 
@@ -10,7 +10,7 @@ import lejos.nxt.SensorPort;
 /**
  * TODO: DESCRIPTION
  * 
- * @author $Author: mahanja $
+ * @author $Author: stollf06 $
  */
 public class  Definitions {
 	public static final String MASTER = "NXT";
@@ -18,20 +18,23 @@ public class  Definitions {
 	
 	public static final LightSensor ls = new LightSensor(SensorPort.S1);
 	public static final float junctionSize = 5.9f;//give value in cm
-	public static final float distBtwnJunct = 14.1f;//give value in cm
-	public static final float distBtwnLsWheel = 8.5f;//give the distance between the light sensor and wheel center in cm
-	public static final int leftJunctAngle = -90;
-	public static final int rightJunctAngle = 90;
-	public static final float corrTestAngle = 20.0f; //used to test the 
+	public static final float distBtwnJunct = 20.7f;//give value in cm
+	public static final float distBtwnLsWheel = 3.0f;//give the distance between the light sensor and wheel center in cm
+	public static final int leftJunctAngle = -90; // angle for left turns
+	public static final int rightJunctAngle = 90; //angle for right turns
+	public static final float corrTestAngle = 25.0f; //used to test the 
 	public static final float corrAngle = 3.0f; //used to correct the direction in case it goes of the line
 	public static final int brightTolerance = 20; //used to give some comparitive tolerance
-	public static boolean wayFinderOn = true; //TODO delete the concerning code in Motion.isThereAWay()
+	public static final float objSize = 10.0f;//give the length of one side for a single object
+	public static final float lsBarDist = 1.0f; //distance between middle of the sensor and the lifting bars
+	//public static boolean wayFinderOn = true; //TODO delete the concerning code in Motion.isThereAWay()
 	
 	public String myName = "UNDEFINED"; // Must be defined before starting the AI!
 	public String othersName = "UNDEFINED"; // Must be defined before starting the AI!
+	public boolean isMaster = false;
 
-	public static final TachoNavigator  pilot = new TachoNavigator (5.5f, 12.3f, Motor.A, Motor.B,false);//TODO
-	public static BrightnessRange colWhiteGround;
+	public static final TachoNavigator  pilot = new TachoNavigator (5.5f, 13.6f, Motor.A, Motor.B,false);//TODO
+	public static BrightnessRange colJunction;
 	public static BrightnessRange colLine;
 	public static BrightnessRange colMyObjects;
 	public static BrightnessRange colOtherRobotObjects;
@@ -40,16 +43,6 @@ public class  Definitions {
 	public static final int masterJnctOffset = 0;//absolute x-axis offset compared to 0
 	public static final int slaveJunctOffset = 2;//relative x-axis offset of slave compared to the master
 	public static final int commonJunctOffset = 1;//absolute x-axis offset
-	
-	public static final String[] calibWhitePaper = {"put the light sensor", "on the white surface", "then press enter to", "start the calibration"}; 
-
-	public static final String[] calibLine = {"put the light sensor", "on the line", "then press enter to", "start the calibration"}; 
-	
-	public static final String[] calibMyObject = {"put the light sensor", "on the my object", "then press enter to", "start the calibration"}; 
-	
-	public static final String[] calibOtherRobotObject = {"put the light sensor", "on the other robots Object", "then press enter to", "start the calibration"}; 
-	
-	public static final String[] calibCommonObject = {"put the light sensor", "on the common object", "then press enter to", "start the calibration"}; 
 
 	
 	private static Definitions instance = null;
@@ -66,20 +59,21 @@ public class  Definitions {
 	}
 	
 	private Definitions(String name) {
-		
 		myName = name;
 		if (myName.equals(MASTER)) {
 			othersName = SLAVE;
+			isMaster = true;
 		} else {
 			othersName = MASTER;
+			isMaster = false;
 		}
 	}
 }
 
 /*
  * $Log: Definitions.java,v $
- * Revision 1.9  2009/05/04 20:33:19  mahanja
- * It searches a way (bug with second unknown field)
+ * Revision 1.10  2009/05/06 17:44:37  stollf06
+ * for the big grid
  *
  * Revision 1.8  2009/05/04 15:15:17  mahanja
  * Ai is mostly implemented but is still throwing errors everywhere!
