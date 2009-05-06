@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Forklift.java,v 1.3 2009/05/04 15:15:17 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Forklift.java,v 1.4 2009/05/06 17:17:49 stollf06 Exp $
 
 package action;
 import lejos.nxt.Button;
@@ -6,18 +6,22 @@ import lejos.nxt.Motor;
 
 /**
  * An object controlling the forklift functionality of the SPRAT 
- * @author $Author: mahanja $
+ * @author $Author: stollf06 $
  */
 public class Forklift {
 	
 	private static int SPEED = 50,
-	                UP_ANGLE = -85,
-	              DOWN_ANGLE = 85;
-	private boolean isDown = true; // initial position
+	                UP_ANGLE = -75,
+	              DOWN_ANGLE = 75;
+	private static boolean isDown = true; // initial position
 	
 	private boolean toggle = true; // testing
 	
 	public Forklift () {
+		
+		Motor.C.setSpeed(SPEED);
+		
+		//TachoMotorPort t = new TachoMotorPort
 		//
 	}
 	
@@ -25,9 +29,14 @@ public class Forklift {
 	 * causes the forklift going down
 	 */
 	public void down() {
+		if(isDown){
+			return;
+		}	
+		Motor.C.lock(0);
 		Motor.C.resetTachoCount();
 		Motor.C.setSpeed(SPEED);
-		Motor.C.rotateTo(UP_ANGLE);
+		Motor.C.rotateTo(DOWN_ANGLE);
+		
 		isDown = true;
 	}
 	
@@ -35,9 +44,14 @@ public class Forklift {
 	 * causes the forklift going up
 	 */
 	public void up() {
+		if(!isDown){
+			return;
+		}
+		
 		Motor.C.resetTachoCount();
 		Motor.C.setSpeed(SPEED);
-		Motor.C.rotateTo(DOWN_ANGLE);
+		Motor.C.rotateTo(UP_ANGLE);
+		Motor.C.lock(25);
 		isDown = false;
 	}
 	
@@ -63,6 +77,9 @@ public class Forklift {
 
 	/*
 	 * $Log: Forklift.java,v $
+	 * Revision 1.4  2009/05/06 17:17:49  stollf06
+	 * eye fonctional, little updates for the forklift
+	 *
 	 * Revision 1.3  2009/05/04 15:15:17  mahanja
 	 * Ai is mostly implemented but is still throwing errors everywhere!
 	 *
