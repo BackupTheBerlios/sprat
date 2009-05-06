@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.4 2009/05/06 17:22:49 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.5 2009/05/06 19:51:03 mahanja Exp $
 
 package def;
 
@@ -54,6 +54,43 @@ public class Calibration {
 		objBR.max += Definitions.brightTolerance;
 		objBR.min -= Definitions.brightTolerance;
 		Definitions.colOtherRobotObjects = objBR; 
+		
+		
+		
+		
+////////////////////////// for testing \\\\\\\\\\\\\\\\\\\\\\\\\\\
+		// junction
+		objBR = new BrightnessRange();
+		objBR.max = 300;//293;
+		objBR.min = 150;
+		Definitions.colJunction = objBR;
+		
+		//line
+		objBR = new BrightnessRange();
+		objBR.max = 400;//368;
+		objBR.min = 301;//313;
+		Definitions.colLine = objBR;
+		
+		//own object
+		objBR = new BrightnessRange();
+		objBR.max = 600;//565;
+		objBR.min = 501;//519;
+		Definitions.colMyObjects = objBR; 
+		
+		//other object
+		objBR = new BrightnessRange();
+		objBR.max = 500;//443;
+		objBR.min = 401;//490;
+		Definitions.colOtherRobotObjects = objBR; 
+////////////////////////// for testing \\\\\\\\\\\\\\\\\\\\\\\\\\\
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		//commun object
 		//setDisplay(Definitions.calibCommonObject);
@@ -118,6 +155,9 @@ public class Calibration {
 }
 /*
  * $Log: Calibration.java,v $
+ * Revision 1.5  2009/05/06 19:51:03  mahanja
+ * It loads an obj very well. but somewhere before unloading is a bug inside.
+ *
  * Revision 1.4  2009/05/06 17:22:49  stollf06
  * full calibration now
  *

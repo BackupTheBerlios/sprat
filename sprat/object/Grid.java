@@ -1,9 +1,11 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.8 2009/05/06 17:17:54 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.9 2009/05/06 19:51:03 mahanja Exp $
 package object;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+
+import com.Communicator;
 
 import def.Definitions;
 
@@ -12,7 +14,7 @@ import tool.Console;
 import tool.MyEnumeration;
 
 public class Grid {
-	public static final int GRID_SIZE = 3;//5; TODO!!!
+	public static final int GRID_SIZE = 5;//3;//5; TODO!!!
 	private static Grid instance = null;
 	Junction grid[][];
 	
@@ -51,16 +53,13 @@ public class Grid {
 	 * @param junct
 	 */
 	public void setJunction(Junction junct) {
-		/*if (junct.getType() == Junction.OUTSIDE) {
-			setGridSize(junct.getPosition().getX() > junct.getPosition().getY() 
-						? junct.getPosition().getX() -1 : junct.getPosition().getY() -1);
-		} else {*/
 		if (junct.getType() != Junction.OUTSIDE) {
-			if (grid[junct.getPosition().getX()][junct.getPosition().getY()].getType() != Junction.HOME_BASE)
+			//if (grid[junct.getPosition().getX()][junct.getPosition().getY()].getType() != Junction.HOME_BASE) {
+			if (grid[junct.getPosition().getX()][junct.getPosition().getY()].getType() == Junction.UNKNOWN)
 				grid[junct.getPosition().getX()][junct.getPosition().getY()] = junct;
+			//}
+			//Communicator.getInstance().sendDiscoveredJunction(junct);
 		}
-		
-		//printGrid();
 	}
 	
 	/*
@@ -186,10 +185,11 @@ public class Grid {
 					BackTracker guide = new BackTracker(map);
 					PathElement path = guide.findWay(robo.getMyActualPosition(), grid[x][y].getPosition());
 
-					if (path == null) {
+					PathElement wayHome = guide.findWay(robo.getMyActualPosition(), robo.getHomeBase());
+					if (path == null || wayHome == null) {
 						continue;
 					}
-					
+					path.getLast().setNextElt(wayHome);
 					return path;
 				}
 			}
@@ -636,6 +636,9 @@ public class Grid {
 }
 /*
  * $Log: Grid.java,v $
+ * Revision 1.9  2009/05/06 19:51:03  mahanja
+ * It loads an obj very well. but somewhere before unloading is a bug inside.
+ *
  * Revision 1.8  2009/05/06 17:17:54  mahanja
  * The Ai is written completely new. Objects were not yet gathered. Only the way to a unknown or my-obj will be found.
  *

@@ -1,7 +1,9 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.7 2009/05/06 17:17:54 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.8 2009/05/06 19:51:03 mahanja Exp $
 package ai;
 
 import java.util.Vector;
+
+import javax.crypto.spec.PSource;
 
 import lejos.nxt.Button;
 import object.Direction;
@@ -12,6 +14,7 @@ import object.Position;
 import object.Robot;
 import tool.Console;
 import action.Eye;
+import action.Forklift;
 import action.Motion;
 import def.Calibration;
 import def.Definitions;
@@ -37,7 +40,7 @@ public class AI {
 	public static void main(String[] args){
 		Calibration calib = new Calibration();
 		Console.println("calibration done");
-		Definitions.wayFinderOn=true;//TODO delete, just for debugging
+		//Definitions.wayFinderOn=true;//TODO delete, just for debugging
 		Definitions defs = Definitions.initInstance(Definitions.MASTER);//TODO change here
 		Definitions.pilot.setSpeed(300);
 		AI ai = new AI();
@@ -50,7 +53,7 @@ public class AI {
 		grid = Grid.getInstance();
 		robo = Robot.initInstance(grid);
 		motion = new Motion(robo, grid);
-		eye = new Eye();
+		//eye = new Eye();
 		Console.println("Ai init");
 		
 	}
@@ -62,34 +65,57 @@ public class AI {
 				Console.println("Asked4Help");
 				colaborate();
 			} else {
+Console.println("found: ");
 				PathElement p = null;
-				//PathElement p = grid.getAWayToNextUnknown(robo);
 				if ((p = grid.getAWayToNextKnownUncommon(robo)) == null) {
-Console.println("no known uncommon");					
+Console.println("  no known mine");					
 					if ((p = grid.getAWayToNextUnknown(robo)) == null) {
-Console.println("no unknown");
+Console.println("  no unknown");
 						/*if ((p = grid.getAWayToNextKnownCommon(robo)) == null) {
 						  }*/
 					}
 				}
+Button.waitForPress();
 				
 				if (p == null) {
-//Console.println("nothing");
-//Button.waitForPress();
 					continue life;	// a kind of busy waiting
 				}
 				
 				do {
 Console.println("--------------------------");
-Console.println("CP> x:"+robo.getMyActualPosition().getX()+" y:"+robo.getMyActualPosition().getY());
-Console.println("NP> x:"+p.getX()+" y:"+p.getY());
-Console.println("IF> x:"+grid.getNextProjectedPosition(robo).getX()+" y:"+grid.getNextProjectedPosition(robo).getY());
-//Button.waitForPress();
+grid.printGrid();
 					orient(p);
 					//////////////////////////// ask other!!!!
-					motion.goToNextJunction();					// forklift.up|down();
-					grid.setJunction(new Junction(robo.getMyActualPosition(), eye.getType()));
+					
+					
+					// if its not for me, i won't go there. (see grid.getway...)
+					if (grid.getJunction(p).getType() == Junction.MASTER_OBJ ||
+						grid.getJunction(p).getType() == Junction.SLAVE_OBJ) {
+						// load
+						motion.goToNextJunction(true);	
+					} else {
+						// unloading loaded object
+						if (motion.isObjLoaded() &&
+							grid.getJunction(grid.getNextProjectedPosition(robo)).getType() == Junction.HOME_BASE) {
 
+							motion.goToNextJunction(false);
+
+							// orient to south
+							Position orientation = grid.getNextProjectedPosition(robo);
+							Position unloadPos = new Position(robo.getHomeBase().getX(), robo.getHomeBase().getY() -1);
+
+							// unload the object
+							orient(unloadPos) ;
+							motion.unload();
+
+							// orient back
+							orient(orientation);
+							
+						// regular move
+						} else 
+							motion.goToNextJunction(false);
+					}
+					
 				} while ((p = p.getNextElt()) != null);
 			}
 //Console.println(" - NEXT - ");
@@ -97,8 +123,8 @@ Console.println("IF> x:"+grid.getNextProjectedPosition(robo).getX()+" y:"+grid.g
 		}
 		
 		
-//Console.println(" - FIN - ");
-//Button.waitForPress();
+Console.println(" - FIN - ");
+Button.waitForPress();
 	}
 	
 	/**
@@ -112,6 +138,7 @@ Console.println("IF> x:"+grid.getNextProjectedPosition(robo).getX()+" y:"+grid.g
 			motion.turn(false);
 		else if (grid.getRelativePositionBehind(robo).equals(p)) {
 			motion.turn(true);motion.turn(true);
+			//motion.turnNTimes(2, true);
 		}
 	}
 	
@@ -131,6 +158,9 @@ Console.println("IF> x:"+grid.getNextProjectedPosition(robo).getX()+" y:"+grid.g
 
 /*
  * $Log: AI.java,v $
+ * Revision 1.8  2009/05/06 19:51:03  mahanja
+ * It loads an obj very well. but somewhere before unloading is a bug inside.
+ *
  * Revision 1.7  2009/05/06 17:17:54  mahanja
  * The Ai is written completely new. Objects were not yet gathered. Only the way to a unknown or my-obj will be found.
  *

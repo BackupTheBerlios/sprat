@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.6 2009/04/27 20:19:56 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.7 2009/05/06 19:51:03 mahanja Exp $
 
 package com;
 
@@ -107,18 +107,13 @@ public class Communicator extends Thread {
 	 * @throws Exception Thrown on connection problems
 	 */
 	protected Communicator(String myName, String othersName) throws Exception {
-		//Console.println("iDev");
 		initDevice(myName);
-		//Console.print("as."+myName +".ok");
 
 		if (myName.equals(def.Definitions.MASTER)) {
-			//Console.println("iMas");
 			initMaster(othersName);
-			//Console.print(".ok");
 		} else {
 			initSlave();
 		}
-		//Console.println("iDone");
 		Console.println("Comm online");
 	}
 
@@ -454,6 +449,9 @@ public class Communicator extends Thread {
 
 /*
  * $Log: Communicator.java,v $
+ * Revision 1.7  2009/05/06 19:51:03  mahanja
+ * It loads an obj very well. but somewhere before unloading is a bug inside.
+ *
  * Revision 1.6  2009/04/27 20:19:56  mahanja
  * implemented processDiscoveredJunctionMessage and fixed a very stupid bug!
  *
