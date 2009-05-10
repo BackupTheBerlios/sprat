@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.5 2009/05/06 19:51:03 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.6 2009/05/10 05:21:36 mahanja Exp $
 
 package def;
 
@@ -27,6 +27,7 @@ public class Calibration {
 	public Calibration(){
 		//Definitions def = Definitions.getInstance();
 		BrightnessRange objBR;
+		/* TOOOO MUCH!
 		setDisplay(calibJunction);
 		objBR = setBrightRange();
 		objBR.max += Definitions.brightTolerance;
@@ -55,7 +56,7 @@ public class Calibration {
 		objBR.min -= Definitions.brightTolerance;
 		Definitions.colOtherRobotObjects = objBR; 
 		
-		
+		*/
 		
 		
 ////////////////////////// for testing \\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -71,17 +72,36 @@ public class Calibration {
 		objBR.min = 301;//313;
 		Definitions.colLine = objBR;
 		
-		//own object
-		objBR = new BrightnessRange();
-		objBR.max = 600;//565;
-		objBR.min = 501;//519;
-		Definitions.colMyObjects = objBR; 
 		
-		//other object
-		objBR = new BrightnessRange();
-		objBR.max = 500;//443;
-		objBR.min = 401;//490;
-		Definitions.colOtherRobotObjects = objBR; 
+		if (Definitions.MASTER.equals(new NameAsker().askName())) {
+			//own object
+			objBR = new BrightnessRange();
+			objBR.max = 600;//565;
+			objBR.min = 501;//519;
+			Definitions.colMyObjects = objBR; 
+			
+			//other object
+			objBR = new BrightnessRange();
+			objBR.max = 500;//443;
+			objBR.min = 401;//490;
+			Definitions.colOtherRobotObjects = objBR; 
+			
+			Definitions.initInstance(Definitions.MASTER);
+		} else {
+			//own object
+			objBR = new BrightnessRange();
+			objBR.max = 600;//565;
+			objBR.min = 501;//519;
+			Definitions.colOtherRobotObjects = objBR; 
+			
+			//other object
+			objBR = new BrightnessRange();
+			objBR.max = 500;//443;
+			objBR.min = 401;//490;
+			Definitions.colMyObjects = objBR; 
+
+			Definitions.initInstance(Definitions.SLAVE);
+		}
 ////////////////////////// for testing \\\\\\\\\\\\\\\\\\\\\\\\\\\
 		
 		
@@ -97,14 +117,15 @@ public class Calibration {
 		//Definitions.colCommonObjects = setBrightRange();
 		
 		
-		LCD.clear();
+		/*LCD.clear();
+		Console.println("I am the: "+Definitions.getInstance().myName);
 		Console.println("Junction"+Definitions.colJunction.min+"/"+Definitions.colJunction.max);
 		Console.println("line: "+Definitions.colLine.min+"/"+Definitions.colLine.max);
 		Console.println("myObj: "+Definitions.colMyObjects.min+"/"+Definitions.colMyObjects.max);
 		Console.println("otherObj: "+Definitions.colOtherRobotObjects.min+"/"+Definitions.colOtherRobotObjects.max);
 		LCD.refresh();
 		Button.waitForPress();
-		LCD.clearDisplay();
+		LCD.clearDisplay();*/
 		
 	}
 	
@@ -155,6 +176,9 @@ public class Calibration {
 }
 /*
  * $Log: Calibration.java,v $
+ * Revision 1.6  2009/05/10 05:21:36  mahanja
+ * It works all well!
+ *
  * Revision 1.5  2009/05/06 19:51:03  mahanja
  * It loads an obj very well. but somewhere before unloading is a bug inside.
  *

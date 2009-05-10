@@ -1,7 +1,8 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Robot.java,v 1.5 2009/05/06 17:17:54 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Robot.java,v 1.6 2009/05/10 05:21:36 mahanja Exp $
 package object;
 
 import action.Eye;
+import ai.AI;
 import lejos.nxt.Button;
 import tool.Console;
 import def.Definitions;
@@ -22,9 +23,9 @@ public class Robot {
 		return instance;
 	}
 	
-	public static Robot initInstance(Grid grid) {
+	public static Robot initInstance(AI ai) {
 		if(instance == null){
-			instance = new Robot(grid); 
+			instance = new Robot(ai.getGrid()); 
 		}
 		return instance;
 	}
@@ -43,8 +44,11 @@ public class Robot {
 			myActualPosition = homeBase;
 			otherActualPosition = new Position(Definitions.masterJnctOffset, 0);
 		}
-		grid.setJunction(new Junction(myActualPosition, Junction.HOME_BASE));
+		grid.setJunction(new Junction(myActualPosition, Junction.HOME_BASE), false);
 		commonHomeBase = new Position(Definitions.commonJunctOffset, 0);
+
+		this.myActualPosition = homeBase;
+		this.myNextPosition = homeBase;
 	}
 	
 	public void changeOrientation(boolean isLeft){
@@ -92,7 +96,7 @@ public class Robot {
 	// SETTERS
 	public void setMyNextPosition(Position myNextPos) {
 		if (myNextPos.equals(myActualPosition))
-			grid.setJunction(new Junction(myNextPosition, Junction.OUTSIDE));
+			grid.setJunction(new Junction(myNextPosition, Junction.OUTSIDE), false);
 		
 		this.myNextPosition = myNextPos;
 	}
@@ -108,9 +112,13 @@ public class Robot {
 	public void setOtherActualPosition(Position otherActualPos) {
 		this.otherActualPosition = otherActualPos; 
 	}
+
 }
 /*
  * $Log: Robot.java,v $
+ * Revision 1.6  2009/05/10 05:21:36  mahanja
+ * It works all well!
+ *
  * Revision 1.5  2009/05/06 17:17:54  mahanja
  * The Ai is written completely new. Objects were not yet gathered. Only the way to a unknown or my-obj will be found.
  *

@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.7 2009/05/06 22:26:12 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.8 2009/05/10 05:21:36 mahanja Exp $
 
 package demo;
 
@@ -21,6 +21,7 @@ public class Demo {
 	private Grid grid;
 	private Robot robo;
 	private Motion motion;
+	private AI ai;
 	
 	/**
 	 * @param args
@@ -50,9 +51,14 @@ public class Demo {
 	}
 
 	public Demo(){
-		grid = Grid.getInstance();
-		 robo =Robot.initInstance(grid);
-		 motion = new Motion(robo, grid);
+		try {
+			ai = new DemoAI();
+			grid = Grid.getInstance(ai);
+			robo =Robot.initInstance(ai);
+			motion = new Motion(robo, grid);
+		} catch (Exception e) {
+			Console.println("Demo init failed");
+		}
 	}
 	//stupid running in circle
 	/*
@@ -69,8 +75,8 @@ public class Demo {
 	public void pathFinding(){
 		//calibrationTest();
 		//Definitions.wayFinderOn=true;
-		Grid grid = Grid.getInstance();
-		Robot robo =Robot.initInstance(grid);
+		Grid grid = Grid.getInstance(ai);
+		Robot robo =Robot.initInstance(ai);
 		Motion motion = new Motion(robo, grid);
 		//Eye e = new Eye();
 		Forklift forklift = new Forklift();
@@ -205,6 +211,9 @@ public class Demo {
 }
 /*
  * $Log: Demo.java,v $
+ * Revision 1.8  2009/05/10 05:21:36  mahanja
+ * It works all well!
+ *
  * Revision 1.7  2009/05/06 22:26:12  stollf06
  * example method to find a path
  *

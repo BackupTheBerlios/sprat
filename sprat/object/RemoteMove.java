@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/RemoteMove.java,v 1.2 2009/04/27 20:06:02 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/RemoteMove.java,v 1.3 2009/05/10 05:21:36 mahanja Exp $
 
 package object;
 
@@ -26,11 +26,16 @@ public class RemoteMove {
 	
 	public static final int FORKLIFT_DOWN= 8; 
 	public static final int FORKLIFT_UP= 9;
+	
+	public static final int FREE = 10;
 }
 
 
 /*
  * $Log: RemoteMove.java,v $
+ * Revision 1.3  2009/05/10 05:21:36  mahanja
+ * It works all well!
+ *
  * Revision 1.2  2009/04/27 20:06:02  mahanja
  * Added forklifter function to the vocabulary
  *

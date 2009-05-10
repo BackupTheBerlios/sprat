@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Direction.java,v 1.3 2009/05/06 17:17:54 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Direction.java,v 1.4 2009/05/10 05:21:36 mahanja Exp $
 
 package object;
 
@@ -13,6 +13,9 @@ public class Direction {
 	public static final int WEST = 1;
 	public static final int SOUTH = 2;
 	public static final int EAST = 3;
+
+	//public static final int VERTICAL = 4;
+	//public static final int HORIZONTAL = 5;
 	
 	private int direction;
 	
@@ -45,6 +48,9 @@ public class Direction {
 
 /*
  * $Log: Direction.java,v $
+ * Revision 1.4  2009/05/10 05:21:36  mahanja
+ * It works all well!
+ *
  * Revision 1.3  2009/05/06 17:17:54  mahanja
  * The Ai is written completely new. Objects were not yet gathered. Only the way to a unknown or my-obj will be found.
  *

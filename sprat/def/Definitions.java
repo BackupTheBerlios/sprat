@@ -1,8 +1,10 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.10 2009/05/06 17:44:37 stollf06 Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.11 2009/05/10 05:21:36 mahanja Exp $
 
 package def;
 
+import tool.Console;
 import lejos.navigation.TachoNavigator;
+import lejos.nxt.Button;
 import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
@@ -10,10 +12,10 @@ import lejos.nxt.SensorPort;
 /**
  * TODO: DESCRIPTION
  * 
- * @author $Author: stollf06 $
+ * @author $Author: mahanja $
  */
 public class  Definitions {
-	public static final String MASTER = "NXT";
+	public static final String MASTER = "MASTER";//"NXT";
 	public static final String SLAVE = "SLAVE";
 	
 	public static final LightSensor ls = new LightSensor(SensorPort.S1);
@@ -60,6 +62,7 @@ public class  Definitions {
 	
 	private Definitions(String name) {
 		myName = name;
+		
 		if (myName.equals(MASTER)) {
 			othersName = SLAVE;
 			isMaster = true;
@@ -72,6 +75,9 @@ public class  Definitions {
 
 /*
  * $Log: Definitions.java,v $
+ * Revision 1.11  2009/05/10 05:21:36  mahanja
+ * It works all well!
+ *
  * Revision 1.10  2009/05/06 17:44:37  stollf06
  * for the big grid
  *

@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/PathElement.java,v 1.1 2009/05/06 17:17:54 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/PathElement.java,v 1.2 2009/05/10 05:21:36 mahanja Exp $
 
 package object;
 
@@ -29,6 +29,7 @@ public class PathElement extends Position {
 		return nextElt;
 	}
 	
+    // not in class diagramm...
 	public Vector toVector() {
 		Vector path = new Vector();
 		path.addElement(this);
@@ -60,6 +61,7 @@ public class PathElement extends Position {
 			return this;
 	}
 	
+    // not in class diagramm...
 	public PathElement getClone() {
 		PathElement myChain = this;
 		PathElement cloneChain = new PathElement(x, y);
@@ -74,6 +76,9 @@ public class PathElement extends Position {
 
 /*
  * $Log: PathElement.java,v $
+ * Revision 1.2  2009/05/10 05:21:36  mahanja
+ * It works all well!
+ *
  * Revision 1.1  2009/05/06 17:17:54  mahanja
  * The Ai is written completely new. Objects were not yet gathered. Only the way to a unknown or my-obj will be found.
  *

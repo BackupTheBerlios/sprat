@@ -1,11 +1,14 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.10 2009/05/06 19:51:03 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.11 2009/05/10 05:21:36 mahanja Exp $
 
 package action;
+
+import com.Communicator;
 
 import object.Direction;
 import object.Grid;
 import object.Junction;
 import object.Position;
+import object.RemoteMove;
 import object.Robot;
 import tool.Console;
 import def.Definitions;
@@ -108,11 +111,13 @@ Definitions.corrAngle));
         int junctType = Eye.getType();
 
         if (junctType == Junction.MASTER_OBJ || 
-        	junctType == Junction.SLAVE_OBJ  || 
-        	junctType == Junction.COMMON_OBJ) {
+        	junctType == Junction.SLAVE_OBJ/*  || 
+        	junctType == Junction.COMMON_OBJ*/) {
             
         	Junction nextJunct = new Junction(nextP, junctType);
-            grid.setJunction(nextJunct);
+            grid.setJunction(nextJunct, true);
+			
+            // do what to do
             if(pickUpObject){
                 Definitions.pilot.travel(objOffset);
                 fork.up();
@@ -127,7 +132,7 @@ Definitions.corrAngle));
         // all ok
         Definitions.pilot.travel(objOffset);
         junctType = Eye.getType();
-grid.setJunction(new Junction(nextP, junctType));
+        grid.setJunction(new Junction(nextP, junctType), true);
         if(junctType != Junction.EMPTY){
             Definitions.pilot.travel(1);
         }
@@ -136,7 +141,7 @@ grid.setJunction(new Junction(nextP, junctType));
     }
 
 
-
+//  not in class diagram ...
     public boolean goNJunctions(int n) {
         for (int i = 0; i < n; i++) {
             if (!goToNextJunction(false)) {
@@ -188,7 +193,7 @@ grid.setJunction(new Junction(nextP, junctType));
         Definitions.pilot.travel(-Definitions.distBtwnLsWheel);
     }
 
-    public void turnRound(boolean isLeft) {
+    /*public void turnRound(boolean isLeft) {
         Definitions.pilot.travel(Definitions.distBtwnLsWheel);
         robo.changeOrientation(isLeft);
         float radius = Definitions.distBtwnJunct + Definitions.junctionSize;
@@ -239,7 +244,7 @@ Definitions.rightJunctAngle);
             }
         }
         Definitions.pilot.travel(-Definitions.distBtwnLsWheel);
-    }
+    }*/
 
     public void directionCorrection(boolean isForward) {
         Definitions.pilot.rotate(-Definitions.corrTestAngle);
@@ -300,9 +305,39 @@ Button.waitForPress();
         // go back
         Definitions.pilot.travel(-distanceToGo / 2);
 	}
+	
+	// remote motions
+	
+	// REMOTE
+	/*public void performRemoteMove(int move) {
+		if (move == RemoteMove.GO_FORWARD) {
+			goToNextJunction(false);
+		} else if (move == RemoteMove.TURN_RIGHT_FORWARD) {
+			turnRound(false);
+		} else if (move == RemoteMove.TURN_LEFT_FORWARD) {
+			turnRound(true);
+		} else if (move == RemoteMove.GO_BACKWARD) {
+			goBackOneJunction();
+		} else if (move == RemoteMove.TURN_RIGHT_BACKWARD) {
+			turnRoundBackwards(false);
+		} else if (move == RemoteMove.TURN_LEFT_BACKWARD) {
+			turnRoundBackwards(true);
+		} else if (move == RemoteMove.TURN_RIGHT) {
+			turn(false);
+		} else if (move == RemoteMove.TURN_LEFT ) {
+			turn(true);
+		} else if (move == RemoteMove.FORKLIFT_DOWN ) {
+			fork.down();
+		} else if (move == RemoteMove.FORKLIFT_UP) {
+			fork.up();
+		}
+	}*/
 }
 /*
  * $Log: Motion.java,v $
+ * Revision 1.11  2009/05/10 05:21:36  mahanja
+ * It works all well!
+ *
  * Revision 1.10  2009/05/06 19:51:03  mahanja
  * It loads an obj very well. but somewhere before unloading is a bug inside.
  * Revision 1.8 2009/05/04 15:39:19 stollf06 with the
