@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Forklift.java,v 1.4 2009/05/06 17:17:49 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Forklift.java,v 1.5 2009/05/11 13:04:52 stollf06 Exp $
 
 package action;
 import lejos.nxt.Button;
@@ -17,12 +17,8 @@ public class Forklift {
 	
 	private boolean toggle = true; // testing
 	
-	public Forklift () {
-		
+	public Forklift () {	
 		Motor.C.setSpeed(SPEED);
-		
-		//TachoMotorPort t = new TachoMotorPort
-		//
 	}
 	
 	/**
@@ -34,7 +30,6 @@ public class Forklift {
 		}	
 		Motor.C.lock(0);
 		Motor.C.resetTachoCount();
-		Motor.C.setSpeed(SPEED);
 		Motor.C.rotateTo(DOWN_ANGLE);
 		
 		isDown = true;
@@ -49,7 +44,6 @@ public class Forklift {
 		}
 		
 		Motor.C.resetTachoCount();
-		Motor.C.setSpeed(SPEED);
 		Motor.C.rotateTo(UP_ANGLE);
 		Motor.C.lock(25);
 		isDown = false;
@@ -77,6 +71,9 @@ public class Forklift {
 
 	/*
 	 * $Log: Forklift.java,v $
+	 * Revision 1.5  2009/05/11 13:04:52  stollf06
+	 * code cleaning
+	 *
 	 * Revision 1.4  2009/05/06 17:17:49  stollf06
 	 * eye fonctional, little updates for the forklift
 	 *

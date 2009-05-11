@@ -1,10 +1,9 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.11 2009/05/10 05:21:36 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.12 2009/05/11 13:05:20 stollf06 Exp $
 
 package def;
 
-import tool.Console;
+
 import lejos.navigation.TachoNavigator;
-import lejos.nxt.Button;
 import lejos.nxt.LightSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.SensorPort;
@@ -12,7 +11,7 @@ import lejos.nxt.SensorPort;
 /**
  * TODO: DESCRIPTION
  * 
- * @author $Author: mahanja $
+ * @author $Author: stollf06 $
  */
 public class  Definitions {
 	public static final String MASTER = "MASTER";//"NXT";
@@ -75,6 +74,9 @@ public class  Definitions {
 
 /*
  * $Log: Definitions.java,v $
+ * Revision 1.12  2009/05/11 13:05:20  stollf06
+ * code cleaning
+ *
  * Revision 1.11  2009/05/10 05:21:36  mahanja
  * It works all well!
  *

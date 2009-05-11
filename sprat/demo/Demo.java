@@ -1,13 +1,12 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.8 2009/05/10 05:21:36 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.9 2009/05/11 13:05:20 stollf06 Exp $
 
 package demo;
 
+import object.Direction;
 import object.Grid;
-import object.Junction;
 import object.Position;
 import object.Robot;
 import tool.Console;
-import action.Eye;
 import action.Forklift;
 import action.Motion;
 import ai.AI;
@@ -37,7 +36,6 @@ public class Demo {
 		//demo.turnRadiusTest();
 		
 		Calibration calib = new Calibration();
-		Definitions defs = Definitions.initInstance(Definitions.MASTER);
 		Demo demo = new Demo();
 		Definitions.pilot.setSpeed(300);
 		Position pos = new Position(3,3);
@@ -60,21 +58,9 @@ public class Demo {
 			Console.println("Demo init failed");
 		}
 	}
-	//stupid running in circle
-	/*
-	public void twoStepSquare() {
-		Definitions.wayFinderOn=false;
-		//Motion motion = new Motion();
-		
-		for (int i = 0; i < 4; i++) {
-			motion.goNJunctions(2);
-			motion.turn(false);
-		}
-	}*/
 	
 	public void pathFinding(){
-		//calibrationTest();
-		//Definitions.wayFinderOn=true;
+
 		Grid grid = Grid.getInstance(ai);
 		Robot robo =Robot.initInstance(ai);
 		Motion motion = new Motion(robo, grid);
@@ -128,6 +114,16 @@ public class Demo {
 		if(xOff == 0 && yOff == 0){
 			return;
 		}
+		if(yOff>0){
+			while(robo.getOrientation()!=Direction.NORTH){
+				motion.turn(false);
+			}
+		}else{
+			while(robo.getOrientation()!=Direction.SOUTH){
+				motion.turn(false);
+			}
+			yOff = -yOff;
+		}
 		//TODO richtig ausrichten
 		motion.goNJunctions(yOff);
 		yOff = endP.getY()-robo.getMyActualPosition().getY();
@@ -137,6 +133,16 @@ public class Demo {
 			findWayThroughWall(false);
 			pathFinding(endP);
 			return;
+		}
+		if(xOff>0){
+			while(robo.getOrientation()!=Direction.EAST){
+				motion.turn(false);
+			}
+		}else{
+			while(robo.getOrientation()!=Direction.WEST){
+				motion.turn(false);
+			}
+			xOff = -xOff;
 		}
 		//TODO in die richtige richtung drehen
 		motion.turn(false);
@@ -211,6 +217,9 @@ public class Demo {
 }
 /*
  * $Log: Demo.java,v $
+ * Revision 1.9  2009/05/11 13:05:20  stollf06
+ * code cleaning
+ *
  * Revision 1.8  2009/05/10 05:21:36  mahanja
  * It works all well!
  *

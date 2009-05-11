@@ -1,16 +1,11 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.11 2009/05/10 05:21:36 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.12 2009/05/11 13:04:52 stollf06 Exp $
 
 package action;
 
-import com.Communicator;
-
-import object.Direction;
 import object.Grid;
 import object.Junction;
 import object.Position;
-import object.RemoteMove;
 import object.Robot;
-import tool.Console;
 import def.Definitions;
 
 public class Motion {
@@ -35,14 +30,6 @@ Definitions.junctionSize) / 2)
      */
     public boolean isThereAWay() {
         int measure = Definitions.ls.readNormalizedValue();
-        /*
-         * TODO delet (debugging) LCD.clearDisplay(); 
-LCD.drawString("measure:",
-         * 0, 0); LCD.drawInt(measure, 9, 0);
-         * LCD.drawInt(Definitions.colLine.min, 7, 1);
-         * LCD.drawInt(Definitions.colLine.max, 11, 1); LCD.refresh();
-         * Button.waitForPress(); LCD.clearDisplay();
-         */
 
         int leftVal, rightVal;
 
@@ -82,6 +69,12 @@ Definitions.corrAngle));
         }
     }
 
+    /**
+     * go to the next junction in the direction the robot is looking
+     * set pickUpObject to true if the robot shall take the object if it finds one
+     * @param pickUpObject
+     * @return true if the robot was able to go to that junction
+     */
     public boolean goToNextJunction(boolean pickUpObject) {
         directionCorrection(true);
         Position actualP = robo.getMyActualPosition();
@@ -97,11 +90,7 @@ Definitions.corrAngle));
 
         // out of grid
         if (!isThereAWay()) {
-            // Console.println("no way found");
-            // Button.waitForPress();
             Definitions.pilot.travel(-distanceToGo / 2);
-            // change the path
-            // robo.setMyNextPosition(robo.getMyActualPosition());
             robo.setMyNextPosition(actualP);
             robo.setMyActualPosition(actualP);
             return false;
@@ -111,8 +100,7 @@ Definitions.corrAngle));
         int junctType = Eye.getType();
 
         if (junctType == Junction.MASTER_OBJ || 
-        	junctType == Junction.SLAVE_OBJ/*  || 
-        	junctType == Junction.COMMON_OBJ*/) {
+        	junctType == Junction.SLAVE_OBJ) {
             
         	Junction nextJunct = new Junction(nextP, junctType);
             grid.setJunction(nextJunct, true);
@@ -133,15 +121,19 @@ Definitions.corrAngle));
         Definitions.pilot.travel(objOffset);
         junctType = Eye.getType();
         grid.setJunction(new Junction(nextP, junctType), true);
+        /*
         if(junctType != Junction.EMPTY){
             Definitions.pilot.travel(1);
-        }
+        }*/
         robo.setMyActualPosition(nextP);
         return true;
     }
 
 
 //  not in class diagram ...
+    /**
+     * calls goToNextJunction n times
+     */
     public boolean goNJunctions(int n) {
         for (int i = 0; i < n; i++) {
             if (!goToNextJunction(false)) {
@@ -150,7 +142,9 @@ Definitions.corrAngle));
         }
         return true;
     }
-
+    /**
+     * goes backward one junction
+     */
     public void goBackOneJunction() {
         directionCorrection(false);
         Position nextP = robo.getMyActualPosition();
@@ -168,6 +162,10 @@ Definitions.corrAngle));
         robo.setMyActualPosition(nextP);
     }
 
+    /**
+     * turns to the left on the junction if isLeft = true
+     * @param isLeft
+     */
     public void turn(boolean isLeft) {
         robo.changeOrientation(isLeft);
         Definitions.pilot.travel(Definitions.distBtwnLsWheel);
@@ -180,6 +178,11 @@ Definitions.corrAngle));
         Definitions.pilot.travel(-Definitions.distBtwnLsWheel);
     }
 
+    /**
+     * calls turn n times
+     * @param n
+     * @param isLeft
+     */
     public void turnNTimes(int n, boolean isLeft) {
         robo.changeOrientation(isLeft);
         Definitions.pilot.travel(Definitions.distBtwnLsWheel);
@@ -246,20 +249,15 @@ Definitions.rightJunctAngle);
         Definitions.pilot.travel(-Definitions.distBtwnLsWheel);
     }*/
 
+    /**
+     * keeps the robot on the grid
+     * if the robot goes backwards set isForward = false
+     */
     public void directionCorrection(boolean isForward) {
         Definitions.pilot.rotate(-Definitions.corrTestAngle);
         int leftVal = Definitions.ls.readNormalizedValue();
         Definitions.pilot.rotate(2 * Definitions.corrTestAngle);
         int rightVal = Definitions.ls.readNormalizedValue();
-        /*
-         * TODO delete (debugging) LCD.clear(); LCD.drawString("left: ", 
-0, 0);
-         * LCD.drawInt(leftVal, 7, 0); LCD.drawString("right: ", 0, 1);
-         * LCD.drawInt(rightVal, 7, 1); LCD.refresh(); 
-Button.waitForPress();
-         * LCD.clearDisplay();
-         */
-        // TODO check closer
         if (leftVal < rightVal - Definitions.brightTolerance) {// left is darker
             // than right
             if (isForward) {
@@ -273,9 +271,7 @@ Button.waitForPress();
         } else if (rightVal < leftVal - Definitions.brightTolerance) {// right
             // is
             // darker
-            // than
-            // the
-            // left
+            // than the left
             if (isForward) {
                 // line is on the right side -> make a correction
                 Definitions.pilot.rotate(-Definitions.corrTestAngle
@@ -290,6 +286,7 @@ Button.waitForPress();
         }
     }
 
+    
 	public boolean isObjLoaded() {
 		return !fork.isDown();
 	}
@@ -297,7 +294,7 @@ Button.waitForPress();
 	public void unload() {
         float distanceToGo = Definitions.distBtwnJunct
         + Definitions.junctionSize;
-        
+ 
         // go a little bit forward
         Definitions.pilot.travel(distanceToGo / 2);
         // unload
@@ -335,6 +332,9 @@ Button.waitForPress();
 }
 /*
  * $Log: Motion.java,v $
+ * Revision 1.12  2009/05/11 13:04:52  stollf06
+ * code cleaning
+ *
  * Revision 1.11  2009/05/10 05:21:36  mahanja
  * It works all well!
  *

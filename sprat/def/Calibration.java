@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.6 2009/05/10 05:21:36 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.7 2009/05/11 13:05:20 stollf06 Exp $
 
 package def;
 
@@ -7,15 +7,15 @@ import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
 public class Calibration {
-	private  final String[] calibJunction = {"put the light sensor", "on the junction", "then press enter to", "start the calibration"}; 
+	private  final String[] calibJunction = {"light sensor", "on junction", "then press enter to", "start the calibration"}; 
 
-	private  final String[] calibLine = {"put the light sensor", "on the line", "then press enter to", "start the calibration"}; 
+	private  final String[] calibLine = {"light sensor", "on the line", "then press enter to", "start the calibration"}; 
 	
-	private  final String[] calibMyObject = {"put the light sensor", "on the my object", "then press enter to", "start the calibration"}; 
+	private  final String[] calibMyObject = {"light sensor", "on my object", "then press enter to", "start the calibration"}; 
 	
-	private  final String[] calibOtherRobotObject = {"put the light sensor", "on the other robots Object", "then press enter to", "start the calibration"}; 
+	private  final String[] calibOtherRobotObject = {"light sensor", "on the other Object", "then press enter to", "start the calibration"}; 
 	
-	private  final String[] calibCommonObject = {"put the light sensor", "on the common object", "then press enter to", "start the calibration"}; 
+	private  final String[] calibCommonObject = {"light sensor", "on the common object", "then press enter to", "start the calibration"}; 
 	
 	public int whiteGround;
 	/**
@@ -176,6 +176,9 @@ public class Calibration {
 }
 /*
  * $Log: Calibration.java,v $
+ * Revision 1.7  2009/05/11 13:05:20  stollf06
+ * code cleaning
+ *
  * Revision 1.6  2009/05/10 05:21:36  mahanja
  * It works all well!
  *

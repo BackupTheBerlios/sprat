@@ -1,12 +1,9 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.11 2009/05/10 05:21:36 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.12 2009/05/11 13:05:20 stollf06 Exp $
 package object;
 
 import ai.AI;
-
 import com.Communicator;
-
 import def.Definitions;
-
 import lejos.nxt.Button;
 import tool.Console;
 
@@ -800,6 +797,9 @@ public class Grid {
 }
 /*
  * $Log: Grid.java,v $
+ * Revision 1.12  2009/05/11 13:05:20  stollf06
+ * code cleaning
+ *
  * Revision 1.11  2009/05/10 05:21:36  mahanja
  * It works all well!
  *

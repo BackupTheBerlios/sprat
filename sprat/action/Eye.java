@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Eye.java,v 1.2 2009/05/06 17:17:50 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Eye.java,v 1.3 2009/05/11 13:04:52 stollf06 Exp $
 
 package action;
 
@@ -12,7 +12,11 @@ public class Eye {
 		
 	}
 	
-	public static int getType() { // TODO: Implement...
+	/**
+	 * returns a junction type according to the read value of the lightsensor
+	 * @return
+	 */
+	public static int getType() {
 		int lsRead = Definitions.ls.readNormalizedValue();
 		Console.println("col:"+lsRead);
 		if (Definitions.colMyObjects.min <= lsRead && lsRead <= Definitions.colMyObjects.max) {
@@ -36,6 +40,9 @@ public class Eye {
 
 /*
  * $Log: Eye.java,v $
+ * Revision 1.3  2009/05/11 13:04:52  stollf06
+ * code cleaning
+ *
  * Revision 1.2  2009/05/06 17:17:50  stollf06
  * eye fonctional, little updates for the forklift
  *

@@ -1,16 +1,12 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/ReadyToHelpMessage.java,v 1.2 2009/04/27 08:48:14 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/ReadyToHelpMessage.java,v 1.3 2009/05/11 13:05:20 stollf06 Exp $
 
 package com.msg;
 
-import com.Communicator;
-
-import object.Direction;
-import object.Position;
 
 /**
  * TODO: DESCRIPTION
  * 
- * @author $Author: mahanja $
+ * @author $Author: stollf06 $
  */
 public class ReadyToHelpMessage implements Message {
 
@@ -28,6 +24,9 @@ public class ReadyToHelpMessage implements Message {
 
 /*
  * $Log: ReadyToHelpMessage.java,v $
+ * Revision 1.3  2009/05/11 13:05:20  stollf06
+ * code cleaning
+ *
  * Revision 1.2  2009/04/27 08:48:14  mahanja
  * Remote controll should work. All messages are parsed at the receiver (supports yet just a 10x10 grid)
  *

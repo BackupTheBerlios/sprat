@@ -1,27 +1,19 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.11 2009/05/10 05:21:36 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.12 2009/05/11 13:05:06 stollf06 Exp $
 package ai;
 
-import java.util.Vector;
-
 import com.Communicator;
-import com.msg.RemoteMessage;
-
 import lejos.nxt.Button;
 import lejos.nxt.Sound;
-import object.Direction;
 import object.Grid;
 import object.Junction;
 import object.PathElement;
 import object.Position;
-import object.RemoteMove;
 import object.Robot;
 import tool.Console;
-import action.Eye;
-import action.Forklift;
 import action.Motion;
 import def.Calibration;
 import def.Definitions;
-import ai.Task;
+
 
 public class AI extends Thread {
 	private Motion motion;
@@ -36,10 +28,8 @@ public class AI extends Thread {
 	public static void main(String[] args){
 		Calibration calib = new Calibration();
 //		Console.println("calibration done");
-		//Definitions.wayFinderOn=true;//TODO delete, just for debugging
 		Definitions defs = Definitions.getInstance();//Definitions.initInstance(Definitions.MASTER);//TODO change here
-		Definitions.pilot.setSpeed(300);
-//		Button.waitForPress();
+		Definitions.pilot.setSpeed(300);;
 		
 		AI ai = null;
 		try {
@@ -53,7 +43,6 @@ public class AI extends Thread {
 		}
 
 		Console.println("start ai");
-		//Button.waitForPress();
 		
 		ai.start();
 	}
@@ -226,8 +215,6 @@ grid.printGrid();
 					
 				} while ((p = p.getNextElt()) != null);
 			//}
-//Console.println(" - NEXT - ");
-//Button.waitForPress();
 		}
 		
 		
@@ -324,6 +311,9 @@ Console.println(" - TRY AGAIN - ");
 
 /*
  * $Log: AI.java,v $
+ * Revision 1.12  2009/05/11 13:05:06  stollf06
+ * code cleaning
+ *
  * Revision 1.11  2009/05/10 05:21:36  mahanja
  * It works all well!
  *
