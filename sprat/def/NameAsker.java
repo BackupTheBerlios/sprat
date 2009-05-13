@@ -5,10 +5,14 @@ import lejos.nxt.Button;
 import lejos.nxt.ButtonListener;
 import lejos.nxt.LCD;
 
+/**
+ * Displays a menu on which the type (MASTER/SLAVE) can be chosen.
+ * @author greila06
+ *
+ */
 public class NameAsker implements ButtonListener {
 	private String current = Definitions.MASTER;
 	private boolean enterPressed = false;
-	
 	
 	public NameAsker() {
 		Button.LEFT.addButtonListener(this);
@@ -17,6 +21,10 @@ public class NameAsker implements ButtonListener {
 		Button.ESCAPE.addButtonListener(this);
 	}
 	
+	/**
+	 * Returns the chosen name of this robot
+	 * @return the chosen name of this robot
+	 */
 	public String askName() {
 		display(current);
 		while(!enterPressed);	// busy waiting
@@ -37,11 +45,21 @@ public class NameAsker implements ButtonListener {
 		LCD.refresh();
 	}
 
+	/**
+	 * ButtonListener implementation. Does nothing on buttonPressed
+	 * @see buttonReleased(Button pressedButton)
+	 */
 	public void buttonPressed(Button arg0) {
 		// Do the change on buttonReleased...
 		
 	}
 
+	/**
+	 * If right of left button were pressed and released change the chosen name.
+	 * If enter were pressed, confirm choice. If the escape button were pressed, this
+	 * end the program. This listeners keep ever on the buttons. Like this the
+	 * application can ever be closed by pressing and releasing the escape buttion.
+	 */
 	public void buttonReleased(Button pressedButton) {
 		if (pressedButton.equals(Button.LEFT) || pressedButton.equals(Button.RIGHT)) {
 			if (current.equals(Definitions.MASTER))

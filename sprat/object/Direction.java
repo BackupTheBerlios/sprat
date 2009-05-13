@@ -1,10 +1,10 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Direction.java,v 1.4 2009/05/10 05:21:36 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Direction.java,v 1.5 2009/05/13 14:51:25 mahanja Exp $
 
 package object;
 
 
 /**
- * TODO: DESCRIPTION
+ * Discribes the four cardinal directions
  * 
  * @author $Author: mahanja $
  */
@@ -23,14 +23,25 @@ public class Direction {
 		this.direction = direction;
 	}
 	
+	/**
+	 * Returns the direction described by this object
+	 * @return one of NORTH, WEST, SOUTH, EAST. See static variables
+	 */
 	public int getDirection() {
 		return direction;
 	}
 	
+	/**
+	 * Sets the direction describing this object
+	 * @param direction. Must be one of NORTH, WEST, SOUTH, EAST. See static variables
+	 */
 	public void setDirection(int direction) {  
 		this.direction = direction;
 	}
 	
+	/**
+	 * Returns a string representation of the described cardinal direction in english 
+	 */
 	public String toString() {
 		if (direction == NORTH) {
 			return "North";
@@ -48,6 +59,10 @@ public class Direction {
 
 /*
  * $Log: Direction.java,v $
+ * Revision 1.5  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.4  2009/05/10 05:21:36  mahanja
  * It works all well!
  *

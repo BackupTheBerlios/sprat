@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/DiscoveredJunctionMessage.java,v 1.3 2009/04/27 08:48:14 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/DiscoveredJunctionMessage.java,v 1.4 2009/05/13 14:51:25 mahanja Exp $
 
 package com.msg;
 
@@ -19,10 +19,18 @@ public class DiscoveredJunctionMessage implements Message {
 			this.junction = junction;
 		}
 		
+		/**
+		 * Sets the position of the discovered junction
+		 * @param junction the position of the discovered junction
+		 */
 		public void setPosition(Junction junction) {
 			this.junction = junction;
 		}
-		
+
+		/**
+		 * Returns the position of the discovered junction
+		 * @param  the position of the discovered junction
+		 */
 		public Junction getJunction() {
 			return junction;
 		}
@@ -43,6 +51,10 @@ public class DiscoveredJunctionMessage implements Message {
 
 /*
  * $Log: DiscoveredJunctionMessage.java,v $
+ * Revision 1.4  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.3  2009/04/27 08:48:14  mahanja
  * Remote controll should work. All messages are parsed at the receiver (supports yet just a 10x10 grid)
  *

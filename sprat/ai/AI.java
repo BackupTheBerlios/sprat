@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.12 2009/05/11 13:05:06 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/ai/AI.java,v 1.13 2009/05/13 14:51:25 mahanja Exp $
 package ai;
 
 import com.Communicator;
@@ -14,7 +14,11 @@ import action.Motion;
 import def.Calibration;
 import def.Definitions;
 
-
+/**
+ * Implementation of the artificial intelligence of the robot.
+ * @author greila06
+ *
+ */
 public class AI extends Thread {
 	private Motion motion;
 	private Grid grid;
@@ -23,11 +27,10 @@ public class AI extends Thread {
 	//private Eye eye;
 
 	/**
-	 * @param args
+	 * The main method of the application
 	 */
 	public static void main(String[] args){
 		Calibration calib = new Calibration();
-//		Console.println("calibration done");
 		Definitions defs = Definitions.getInstance();//Definitions.initInstance(Definitions.MASTER);//TODO change here
 		Definitions.pilot.setSpeed(300);;
 		
@@ -37,6 +40,7 @@ public class AI extends Thread {
 		} catch (Exception e) {
 			Console.println("-------------------");
 			Console.println("ERROR in Ai");
+			Console.println(e.getMessage());
 			Console.println("-------------------");
 			Button.waitForPress();
 			return;
@@ -70,6 +74,7 @@ public class AI extends Thread {
 	}
 
 	/**
+	 * Runs the ai...
 	 */
 	public void run() {
 		Communicator comm = null;
@@ -82,145 +87,66 @@ public class AI extends Thread {
 			Button.waitForPress();
 			return;
 		}
-		
-		//Console.println(" - RUN - ");
-		life: while(grid.isWorkToDo()) {
-			/*if (comm.askedForHelp()) {
-				// the other one asked this robot for help
-															Console.println("Asked4Help");
-				Position p = comm.getNeedHelpPosotion();
-				Direction d = comm.getNeedHelpOrientation();
-				
-				Position pbefore; // the position from which to come
-				if (d.getDirection() == Direction.NORTH) {
-					pbefore = new Position(p.getX(), p.getY()+1);
-				} else if (d.getDirection() == Direction.EAST) {
-					pbefore = new Position(p.getX()+1, p.getY());
-				} else if (d.getDirection() == Direction.SOUTH) {
-					pbefore = new Position(p.getX(), p.getY()-1);
-				} else { //if (d.getDirection() == Direction.WEST) {
-					pbefore = new Position(p.getX()-1, p.getY());
+		while(grid.isWorkToDo()){
+			PathElement p = null;
+			if(motion.isObjLoaded()) {
+				p = grid.getAWayBackHome(robo);
+			} else if ((p = grid.getAWayToNextKnownUnCommon(robo)) == null) {
+				if ((p = grid.getAWayToNextUnknown(robo)) == null) {
+					/* does not work..
+					if ((p = grid.getAWayToNextKnownCommon(robo)) == null) {
+						try {
+							sleep(500);
+						} catch (InterruptedException e) {
+							// can't sleep, so do a busy waiting
+						}
+						continue;	// try again
+					}*/
 				}
-					 
-				// add the demanded position
-				PathElement way = grid.getAWayTo(robo, pbefore);
-				way.getLast().setNextElt(new PathElement(p));
+			}
+			Console.println("here3"); //TODO
+			do {
+				orient(p);
 				
-				if (way.hasNextElt())
-					do {
-						Position currP = way.getNextElt();
-						orient(currP);
-						
-						// ask other
-						if (!askOther(currP))
-							continue;	// try later again
+				// ask other
+				if (!askOther(p))
+					continue;	// try later again
+				
+				
+				// if its not for me, i won't go there. (see grid.getway...)
+				if (grid.getJunction(p).getType() == Junction.MASTER_OBJ ||
+					grid.getJunction(p).getType() == Junction.SLAVE_OBJ) {
+					// load
+					motion.goToNextJunction(true);
+					grid.setJunction(new Junction(robo.getMyActualPosition(), Junction.EMPTY), true);
+				} else {
+					// unloading loaded object
+					if (motion.isObjLoaded() &&
+						grid.getJunction(grid.getNextProjectedPosition(robo)).getType() == Junction.HOME_BASE) {
+
 						motion.goToNextJunction(false);
-					} while ((way = way.getNextElt()) != null);
-				
-				try {
-					comm.sendReadyToHelp();
-				} catch (Exception e) {
-					Console.println("E: send ready");
+
+						// orient to south
+						Position orientation = grid.getNextProjectedPosition(robo);
+						Position unloadPos = new Position(robo.getHomeBase().getX(), robo.getHomeBase().getY() -1);
+
+						// unload the object
+						orient(unloadPos) ;
+						motion.unload();
+
+						// orient back
+						orient(orientation);
+						
+					// regular move
+					} else 
+						motion.goToNextJunction(false);
 				}
 				
-				while(comm.helpFinished());	// busy waiting
-			} else if (grid.getJunction(grid.getNextProjectedPosition(robo)).getType() == Junction.COMMON_OBJ) { 
-				// the robot stands now in front of a common obj and will act as master
-															Console.println("I am the Master");
-				
-				// ask other to come to help me
-				try {
-					comm.sendDemandHelp(grid.othersPositionToHelp(robo.getMyActualPosition()), new Direction(robo.getOrientation()));
-				} catch (Exception e) {
-					Console.println("E: can't demand help");
-					continue;	// like this it does not gives any sense
-				}
-				
-				while (!comm.getReadyToHelp()); // busy waiting;
-				
-				Position commonHomeBase = new Position(0, Definitions.commonJunctOffset);
-				PathElement way = grid.getAWayTo(robo, commonHomeBase);
-
-				if (way.hasNextElt())
-					do {
-						collaborativeOrient(way.getNextElt());
-					} while ((way = way.getNextElt()) != null);
-				
-			}else {*/
-				// no cooperation yet
-															Console.println("found: ");
-				PathElement p = null;
-				if(motion.isObjLoaded()) {
-					p = grid.getAWayBackHome(robo);
-															Console.println("  back home");
-				} else if ((p = grid.getAWayToNextKnownUnCommon(robo)) == null) {
-															Console.println("  no known mine");					
-					if ((p = grid.getAWayToNextUnknown(robo)) == null) {
-															Console.println("  no unknown");
-						/*if ((p = grid.getAWayToNextKnownCommon(robo)) == null) {
-															Console.println("  no collective");
-							try {
-								sleep(500);
-							} catch (InterruptedException e) {
-								// can't sleep, so do a busy waiting
-							}
-							continue;	// try again
-						}*/
-					}
-				}
-				
-/*				if (p == null) {
-Console.println("  nothing");
-					continue life; //	try again
-				}*/
-				
-				do {
-Console.println("--------------------------");
-grid.printGrid();
-					orient(p);
-					
-					// ask other
-					if (!askOther(p))
-						continue;	// try later again
-					
-					
-					// if its not for me, i won't go there. (see grid.getway...)
-					if (grid.getJunction(p).getType() == Junction.MASTER_OBJ ||
-						grid.getJunction(p).getType() == Junction.SLAVE_OBJ) {
-						// load
-						motion.goToNextJunction(true);
-						grid.setJunction(new Junction(robo.getMyActualPosition(), Junction.EMPTY), true);
-					} else {
-						// unloading loaded object
-						if (motion.isObjLoaded() &&
-							grid.getJunction(grid.getNextProjectedPosition(robo)).getType() == Junction.HOME_BASE) {
-
-							motion.goToNextJunction(false);
-
-							// orient to south
-							Position orientation = grid.getNextProjectedPosition(robo);
-							Position unloadPos = new Position(robo.getHomeBase().getX(), robo.getHomeBase().getY() -1);
-
-							// unload the object
-							orient(unloadPos) ;
-							motion.unload();
-
-							// orient back
-							orient(orientation);
-							
-						// regular move
-						} else 
-							motion.goToNextJunction(false);
-					}
-					
-				} while ((p = p.getNextElt()) != null);
-			//}
+			} while ((p = p.getNextElt()) != null);
 		}
-		
-		
-Console.println(" - FIN - ");
-Sound.playTone(400, 1000);
-Button.waitForPress();
+		Console.println(" - FIN - ");
+		Sound.playTone(400, 1000);
+		Button.waitForPress();
 	}
 		
 	private boolean askOther(Position nextPosition) {
@@ -236,12 +162,9 @@ Button.waitForPress();
 					sleep(500);	// sleep for a half of a second
 				
 				// and try again
-Console.println(" - TRY AGAIN - ");
-//Button.waitForPress();
-				
 			} while (!comm.getAcknowledge()); // busy waiting
 		} catch (Exception e) {
-			// somewhere an error occured, just try again
+			// somewhere an error occurred, just try again
 			return false;
 		}
 		return true;
@@ -261,56 +184,14 @@ Console.println(" - TRY AGAIN - ");
 			//motion.turnNTimes(2, true);
 		}
 	}
-	
-	/**
-	 * on collaborative orientation both robots must be 
-	 * able to follow the move to not skip the payload.
-	 * /
-	private boolean collaborativeOrient(Position p) {
-		try {
-			if (grid.getRelativePositionLeft(robo).equals(p)) {
-				int rm = RemoteMove.TURN_LEFT_BACKWARD;
-				Communicator.getInstance(this).sendRemoteMove(rm);
-				motion.turn(true);
-			} else if (grid.getRelativePositionRight(robo).equals(p)) {
-				int rm = RemoteMove.TURN_RIGHT_BACKWARD;
-				Communicator.getInstance(this).sendRemoteMove(rm);
-				motion.turn(false);
-			} else if (grid.getRelativePositionBehind(robo).equals(p)) {
-				int rm = RemoteMove.TURN_LEFT_BACKWARD;
-				// first time...
-				Communicator.getInstance(this).sendRemoteMove(rm);
-				motion.turn(true);
-				// second time...
-				sleep(500);	// wait until the other robot had finished his move
-				Communicator.getInstance(this).sendRemoteMove(rm);
-				motion.turn(true);
-				//motion.turnNTimes(2, true);
-			}
-		} catch (Exception e) {
-			// Oops a problem...
-			return false;
-		}
-		return true;
-	}*/
-	
-	
-	/**
-	 * Sets the mode of the TaskManager
-	 * @param mode influences the decision in whatToDo
-	 * /
-	public void setMode(int mode) {
-		this.mode = mode;
-	}*/
-
-		
-	/*public void colaborate() {
-		Console.println("COLABORATE...");
-	}*/
 }
 
 /*
  * $Log: AI.java,v $
+ * Revision 1.13  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.12  2009/05/11 13:05:06  stollf06
  * code cleaning
  *

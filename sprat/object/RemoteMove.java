@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/RemoteMove.java,v 1.3 2009/05/10 05:21:36 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/RemoteMove.java,v 1.4 2009/05/13 14:51:25 mahanja Exp $
 
 package object;
 
@@ -12,8 +12,6 @@ package object;
  * @author $Author: mahanja $
  *
  */
-
-
 public class RemoteMove {
 	public static final int GO_FORWARD = 0;
 	public static final int TURN_RIGHT_FORWARD = 1;
@@ -33,6 +31,10 @@ public class RemoteMove {
 
 /*
  * $Log: RemoteMove.java,v $
+ * Revision 1.4  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.3  2009/05/10 05:21:36  mahanja
  * It works all well!
  *

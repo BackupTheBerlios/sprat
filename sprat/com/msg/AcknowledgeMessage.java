@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/AcknowledgeMessage.java,v 1.3 2009/05/11 13:05:20 stollf06 Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/msg/AcknowledgeMessage.java,v 1.4 2009/05/13 14:51:25 mahanja Exp $
 
 package com.msg;
 
@@ -6,7 +6,7 @@ package com.msg;
 /**
  * TODO: DESCRIPTION
  * 
- * @author $Author: stollf06 $
+ * @author $Author: mahanja $
  */
 public class AcknowledgeMessage implements Message {
 	public static int NOT_OK = 0;
@@ -18,10 +18,22 @@ public class AcknowledgeMessage implements Message {
 		this.ok = ok;
 	}
 	
+	/**
+	 * Sets if the acknowledgment will be ACK or NACK
+	 * if ok == 1 => OK <br>
+	 * else if ok == 0 => NOK <br>
+	 * 
+	 * The method does not test the integrity of the given parameter
+	 * @param ok 0 for NOT_OK or 1 for OK
+	 */
 	public void setOK(int ok) {
 		this.ok = ok;
 	}
 
+	/**
+	 * Returns eigher 1 => OK or 0 => NOT_OK
+	 * @return either 1 => OK or 0 => NOT_OK
+	 */
 	public int getOK() {
 		return ok;
 	}
@@ -38,6 +50,10 @@ public class AcknowledgeMessage implements Message {
 
 /*
  * $Log: AcknowledgeMessage.java,v $
+ * Revision 1.4  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.3  2009/05/11 13:05:20  stollf06
  * code cleaning
  *

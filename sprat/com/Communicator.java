@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.8 2009/05/10 05:21:36 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/com/Communicator.java,v 1.9 2009/05/13 14:51:25 mahanja Exp $
 
 package com;
 
@@ -75,13 +75,12 @@ public class Communicator extends Thread {
 	private DataOutputStream dos;
 	private DataInputStream dis;
 	private boolean acknowledgeAnswer = false,
-					acknowledgeArrived = false;
-					/*,
+					acknowledgeArrived = false,
 	                readyToHelp = false,
 	                askedForHelp = false,
 					helpFinished = false;
 	private Position needHelpPosition = null;
-	private Direction needHelpOrientation = null;*/ 
+	private Direction needHelpOrientation = null;
 	private AI ai;
 	
 
@@ -130,7 +129,11 @@ public class Communicator extends Thread {
 		Console.println("Comm online");
 	}
 
-	// initializes the local bluetooth device
+	/**
+	 * Initializes the local bluetooth device
+	 * @param myName the name of the robot
+	 * @throws Exception
+	 */
 	private void initDevice(String myName) throws Exception {
 		if (!LocalDevice.isPowerOn()) 
 			throw new Exception(ERR_BLUETOOTH_OFF);
@@ -267,10 +270,10 @@ public class Communicator extends Thread {
 	 * @param pos the position where this one needs the other to help
 	 * @param direction the direction the other robot needs to help
 	 * @throws Exception 
-	 * /
+	 */
 	public void sendDemandHelp(Position pos, Direction direction) throws Exception {
 		sendMessage(new NeedHelpMessage(pos, direction));
-	}*/
+	}
 	
 	/**
 	 * Sends command for remote control. This is used when two robots are collaborating.
@@ -278,10 +281,10 @@ public class Communicator extends Thread {
 	 * @see object.RemoteMove
 	 * @param the direction where to move
 	 * @throws Exception 
-	 * /
+	 */
 	public void sendRemoteMove(int type) throws Exception {
 		sendMessage(new RemoteMessage(type));
-	}*/
+	}
 	
 	/**
 	 * The msg must end with a "newline" character as it will be understood by the receiver!
@@ -289,15 +292,11 @@ public class Communicator extends Thread {
 	 * @throws Exception
 	 */
 	private void sendMessage(String msg) throws Exception {
-		//Console.println("Sending...");
 		dos.writeChars(msg);
     	dos.flush();
-    	//Console.println(msg +" send");
 	}
 	
 	private void sendMessage(Message msg) throws Exception {
-		//Console.println("Send: "+msg.getMessageString());
-		
 		sendMessage(msg.getMessageString() + ENDL);
 	}
 	
@@ -332,13 +331,12 @@ public class Communicator extends Thread {
 	}
 	
 	private void processMessage(String text) {
-		//Console.println("r: "+ text);
 		
 		// data gets information...
 		Message m = null;
 		int type = Integer.parseInt(text.substring(0,1)); // ever only first char
 		int[] values = parseMessageBody(text.substring(2, text.length()));
-		
+		Console.println("Msg:"+type); //TODO delete, debug
 		if (type == Message.MSGTYPE_ACK) { 
 			m = new AcknowledgeMessage(values[0]);
 			processAcknowledgeMessage(m);
@@ -349,7 +347,7 @@ public class Communicator extends Thread {
 			m = new DiscoveredJunctionMessage(
 				new Junction(new Position(values[1],values[2]),values[0]));
 			processDiscoveredJunctionMessage(m);
-		}/* else if (type == Message.MSGTYPE_NEEDHELP) {
+		} else if (type == Message.MSGTYPE_NEEDHELP) {
 			m = new NeedHelpMessage(new Position(values[0], values[1]), new Direction(values[2])); 
 			processNeedHelpMessage(m);
 		} else if (type == Message.MSGTYPE_READYTOHELP) {
@@ -358,7 +356,7 @@ public class Communicator extends Thread {
 		} else if (type == Message.MSGTYPE_REMOTEMOVE) {
 			m = new RemoteMessage(values[0]);
 			processRemoteMessage(m);
-		}*/ else { 
+		} else { 
 			Console.println("E: msg="+text);
 		}
 	}
@@ -396,9 +394,14 @@ public class Communicator extends Thread {
 		acknowledgeAnswer = (ack.getOK() == AcknowledgeMessage.OK);
 		
 		acknowledgeArrived = true;
-		//Console.println("ACK:"+ack.getOK());
 	}
 	
+	/**
+	 * true if an acknowledge messge arrived since the last
+	 * invocation of this method.
+	 * @return true if an acknowledge messge arrived since the last
+	 * invocation of this method.
+	 */
 	public boolean acknowledgeArrived() {
 		if (acknowledgeArrived) {
 			acknowledgeArrived = false;
@@ -407,16 +410,22 @@ public class Communicator extends Thread {
 		return false;
 	}
 	
+	/**
+	 * Sets the acknowledge arrived flag to false
+	 */
 	public void resetAchnowledge() {
 		acknowledgeAnswer = false;
 	}
 	
+	/**
+	 * returns the answer of the acknowledge
+	 * @return the answer of the acknowledge
+	 */
 	public boolean getAcknowledge() {
 		return acknowledgeAnswer;
 	}
 	
 	private void processNextPositionMessage(Message m) {
-		//int[] values = parseMessageBody(m.getMessageString());
 		Position p = ((NextPositionMessage)m).getPosition();
 		
 		if ((ai.getRobot().getMyActualPosition().getX() == p.getX() &&
@@ -440,19 +449,33 @@ public class Communicator extends Thread {
 	private void processDiscoveredJunctionMessage(Message m) {
 		ai.getGrid().setJunction(((DiscoveredJunctionMessage)m).getJunction(), false);
 	}
-	
-	/*private void processNeedHelpMessage(Message m) {
+
+	private void processNeedHelpMessage(Message m) {
 		needHelpPosition = ((NeedHelpMessage)m).getPosition();
 		needHelpOrientation = ((NeedHelpMessage)m).getDirection();
 		askedForHelp = true;
 	}
 	
+	/**
+	 * Returns the orientation needed for the current help task
+	 * @return the orientation needed for the current help task
+	 */
 	public Direction getNeedHelpOrientation() {
 		return needHelpOrientation;
 	}
+	
+	/**
+	 * Returns the position needed for the current help task
+	 * @return the position needed for the current help task
+	 */
 	public Position getNeedHelpPosotion() {
 		return needHelpPosition;
 	}
+	
+	/**
+	 * Returns true if asked for help since last invocation of this method
+	 * @return true if asked for help since last invocation of this method
+	 */
 	public boolean askedForHelp() {
 		if (askedForHelp) {
 			askedForHelp = false;
@@ -460,10 +483,15 @@ public class Communicator extends Thread {
 		}
 		return false;
 	}
+	
 	private void processReadyToHelpMessage(Message m) {
 		readyToHelp = true;
 	}
 	
+	/** 
+	 * Returns true if ready to help message arrived since last invocation of this method
+	 * @return true if ready to help message arrived since last invocation of this method
+	 */
 	public boolean getReadyToHelp() {
 		if (readyToHelp) {
 			readyToHelp = false;
@@ -471,6 +499,7 @@ public class Communicator extends Thread {
 		}
 		return false;
 	}
+	
 	private void processRemoteMessage(Message m) {
 		RemoteMessage rm = (RemoteMessage)m;
 		
@@ -479,92 +508,29 @@ public class Communicator extends Thread {
 			return;
 		}
 		
-		ai.getMotion().performRemoteMove(rm.getType());
+		//ai.getMotion().performRemoteMove(rm.getType());
+		// not implemented in AI!!!
 	}
 
+	/**
+	 * Returns true if help task finished since last invocation of this method
+	 * @return true if help task finished since last invocation of this method
+	 */
 	public boolean helpFinished() {
 		if (helpFinished) {
 			helpFinished = false;
 			return true;
 		}
 		return false;
-	}*/
-
-	
-	///////////////////////////////////////////////////////
-	//                                                   //
-	//                     TESTING                       //
-	//                                                   //
-	///////////////////////////////////////////////////////
-	
-	/*public static void main(String args[]) {
-		Definitions.initInstance(Definitions.MASTER);
-		//Definitions.initInstance(Definitions.SLAVE);
-		
-		Communicator com = null;
-		
-		// init and connect
-		try {
-			com = Communicator.getInstance();
-		} catch(Exception e) {
-			Console.println("E: init com failed");
-			try {
-				Button.ESCAPE.waitForPressAndRelease();
-			} catch (InterruptedException ie) {}
-			System.exit(1);
-		}
-		
-		// send something
-		try {
-			com.sendMessage("HALLO "+def.Definitions.getInstance().othersName);
-		} catch (Exception e) {
-			Console.println("E: send failed");
-			try {
-				Button.ESCAPE.waitForPressAndRelease();
-			} catch (InterruptedException ie) {}
-			System.exit(1);
-		}
-/*
-		// taking remote control over the others port A motor
-		Console.println("REMOTE as "+Definitions.getInstance().myName);
-		
-		if (Definitions.getInstance().myName.equals(Definitions.MASTER)) {
-			RemoteNXT remote = null;
-			try {
-				remote= com.takeControll(Definitions.getInstance().othersName);
-			} catch (Exception e) {
-				Console.println("E: remote failed");
-				try {
-					Button.ESCAPE.waitForPressAndRelease();
-				} catch (InterruptedException ie) {}
-				System.exit(1);
-			}
-
-			Console.println("controlling");
-			
-			while(!Button.ESCAPE.isPressed()) {
-				remote.A.rotate(Motor.A.getTachoCount());
-			}
-		} else {
-			Console.println("being controlled");
-			try {
-				Button.ESCAPE.waitForPressAndRelease();
-			} catch (InterruptedException ie) {}
-			System.exit(1);
-		}
-* /
-		
-		// exiting
-		Console.println("EXIT");
-		try {
-			Button.ESCAPE.waitForPressAndRelease();
-		} catch (InterruptedException ie) {}
-		System.exit(1);
-	}*/
+	}
 }
 
 /*
  * $Log: Communicator.java,v $
+ * Revision 1.9  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.8  2009/05/10 05:21:36  mahanja
  * It works all well!
  *

@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.12 2009/05/11 13:05:20 stollf06 Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Definitions.java,v 1.13 2009/05/13 14:51:25 mahanja Exp $
 
 package def;
 
@@ -11,7 +11,7 @@ import lejos.nxt.SensorPort;
 /**
  * TODO: DESCRIPTION
  * 
- * @author $Author: stollf06 $
+ * @author $Author: mahanja $
  */
 public class  Definitions {
 	public static final String MASTER = "MASTER";//"NXT";
@@ -51,7 +51,12 @@ public class  Definitions {
 	public static Definitions getInstance() {
 		return instance;
 	}
-	
+
+	/**
+	 * Initializes the definitions with the given name. 
+	 * Name should be "MASTER" or "SLAVE".
+	 * @param name MASTER or SLAVE
+	 */
 	public static Definitions initInstance(String name) {
 		if(instance == null){
 			instance = new Definitions(name); 
@@ -74,6 +79,10 @@ public class  Definitions {
 
 /*
  * $Log: Definitions.java,v $
+ * Revision 1.13  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.12  2009/05/11 13:05:20  stollf06
  * code cleaning
  *

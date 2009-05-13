@@ -1,9 +1,15 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/PathElement.java,v 1.2 2009/05/10 05:21:36 mahanja Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/PathElement.java,v 1.3 2009/05/13 14:51:25 mahanja Exp $
 
 package object;
 
 import java.util.Vector;
 
+/**
+ * Defines a chained list of position, so the robot can follow 
+ * this path to reach a target position
+ * @author greila06
+ *
+ */
 public class PathElement extends Position {
 
 	private PathElement nextElt = null;
@@ -15,38 +21,37 @@ public class PathElement extends Position {
 	public PathElement(int x, int y) {
 		super(x,y);
 	}
-	
+
+	/**
+	 * Returns true if there is a following element
+	 * @return true if there is a following element
+	 */
 	public boolean hasNextElt() {
 		return nextElt != null;
 	}
 	
+	/**
+	 * Returns the following element
+	 * @return the following element
+	 */
 	public PathElement getNextElt() {
 		return nextElt;
 	}
 	
+	/**
+	 * Sets the following element
+	 * @param the following element
+	 * @return the given following element
+	 */
 	public PathElement setNextElt(PathElement ne) {
 		nextElt = ne;
 		return nextElt;
 	}
 	
-    // not in class diagramm...
-	public Vector toVector() {
-		Vector path = new Vector();
-		path.addElement(this);
-		if (hasNextElt())
-			return nextElt.toVector(path);
-		else
-			return path;
-	}
-	
-	private Vector toVector(Vector path) {
-		path.addElement(this);
-		if (hasNextElt())
-			return nextElt.toVector(path);
-		else
-			return path;
-	}
-	
+    /**
+     * Returns the length of this chain of PahtElements
+     * @return the length of this chain of PahtElements
+     */
 	public int length() {
 		if (hasNextElt())
 			return nextElt.length() + 1;
@@ -54,28 +59,24 @@ public class PathElement extends Position {
 			return 1;
 	}
 	
+	/**
+	 * Returns the last element of this chain of PathElements
+	 * @return the last element of this chain of PathElements
+	 */
 	public PathElement getLast() {
 		if (hasNextElt())
 			return nextElt.getLast();
 		else
 			return this;
 	}
-	
-    // not in class diagramm...
-	public PathElement getClone() {
-		PathElement myChain = this;
-		PathElement cloneChain = new PathElement(x, y);
-		while(myChain.hasNextElt()) {
-			myChain = myChain.getNextElt();
-			cloneChain.setNextElt(new PathElement(myChain.x, myChain.y));
-			cloneChain = cloneChain.getNextElt();
-		}
-		return cloneChain;
-	}
 }
 
 /*
  * $Log: PathElement.java,v $
+ * Revision 1.3  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.2  2009/05/10 05:21:36  mahanja
  * It works all well!
  *

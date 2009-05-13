@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.9 2009/05/11 13:05:20 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/demo/Demo.java,v 1.10 2009/05/13 14:51:25 mahanja Exp $
 
 package demo;
 
@@ -15,6 +15,11 @@ import def.Definitions;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
+/**
+ * This class is for demonstration purposes only
+ * @author greila06
+ *
+ */
 public class Demo {
 	static Definitions defs;
 	private Grid grid;
@@ -59,6 +64,9 @@ public class Demo {
 		}
 	}
 	
+	/**
+	 * Finds a path
+	 */
 	public void pathFinding(){
 
 		Grid grid = Grid.getInstance(ai);
@@ -103,8 +111,10 @@ public class Demo {
 		Definitions.pilot.travel(-20);
 	}
 	
-	//TODO
-	
+	/**
+	 * Finds a path to the given position
+	 * @param endP the target position
+	 */
 	public void pathFinding(Position endP){
 		//grid.isWorkToDo();
 		Position actuP = robo.getMyActualPosition();
@@ -155,6 +165,10 @@ public class Demo {
 		}
 	}
 	
+	/**
+	 * Finds an alternative way if there is an object on the way
+	 * @param leftTurns
+	 */
 	private void findWayThroughWall(boolean leftTurns){
 		motion.turn(leftTurns);
 		Console.println("turned");
@@ -175,9 +189,6 @@ public class Demo {
 		findWayThroughWall(!leftTurns);
 		
 	}
-	
-	
-	
 	
 	public void calibrationTest(){
 		Calibration calib = new Calibration();
@@ -217,6 +228,10 @@ public class Demo {
 }
 /*
  * $Log: Demo.java,v $
+ * Revision 1.10  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.9  2009/05/11 13:05:20  stollf06
  * code cleaning
  *

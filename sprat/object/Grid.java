@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.12 2009/05/11 13:05:20 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Grid.java,v 1.13 2009/05/13 14:51:25 mahanja Exp $
 package object;
 
 import ai.AI;
@@ -7,14 +7,18 @@ import def.Definitions;
 import lejos.nxt.Button;
 import tool.Console;
 
+/**
+ * Defines the grid. There are implemented lots of 
+ * methods used to calculate ways and so on.
+ * @author greila06
+ */
 public class Grid {
-	public static final int GRID_SIZE = 5;//3;//5; TODO!!!
+	public static final int GRID_SIZE = 5;	// this should not be static, but in this
+											// milestone it is more important that it 
+											// works
 	private static Grid instance = null;
 	Junction grid[][];
 	AI ai;
-	
-	//private int gridSize = -1;
-	//private boolean gridSizeIsKnown = false;
 	
 	/**
 	 * The grid should be created after the initialization of master and slave.
@@ -51,16 +55,6 @@ public class Grid {
 	 * @param junct
 	 */
 	public void setJunction(Junction junct, boolean informOther) {
-		/*if (junct.getType() != Junction.OUTSIDE) {
-			//if (grid[junct.getPosition().getX()][junct.getPosition().getY()].getType() != Junction.HOME_BASE) {
-			if (grid[junct.getPosition().getX()][junct.getPosition().getY()].getType() == Junction.UNKNOWN)
-				grid[junct.getPosition().getX()][junct.getPosition().getY()] = junct;
-			//}
-		}*/
-        
-		Console.println("FOUND:"+junct.getTypeChar());
-		Button.waitForPress();
-		
 		if (grid[junct.getPosition().getX()][junct.getPosition().getY()].getType() != Junction.HOME_BASE)
 			grid[junct.getPosition().getX()][junct.getPosition().getY()].setType(junct.getType());
 		
@@ -75,13 +69,6 @@ public class Grid {
         }
 	}
 	
-	/*
-	private void setGridSize(int size) {
-		gridSize = size;
-		gridSizeIsKnown = true;
-	}
-	*/
-
 	/**
 	 * Get a junction object according to a position on the grid.
 	 * If the junction on pos isn't yet known it will be added to
@@ -140,17 +127,6 @@ public class Grid {
 		return wayHome;
 	}
 	
-	/*public PathElement getAWayTo(Robot robot, Position target) {
-		boolean map[][] = getMap();
-		map[target.getX()][target.getY()] = true;
-		
-		BackTracker guide = new BackTracker(map);
-
-		PathElement wayTo = guide.findWay(robot.getMyActualPosition(), robot.getHomeBase());
-				
-		return wayTo;
-	}*/
-	
 	/**
 	 * Creates a 2D boolean map where true values are empty positions
 	 * @return a 2D boolean map where true values are empty positions
@@ -167,32 +143,14 @@ public class Grid {
 	}
 
 	/**
-	 * True if there is no known uncommon object to process
-	 * @return true if no known objects (concerning to this robot) on the grid
-	 * /
-	public boolean nothingElseThanSearching() {
-		Position currP = new Position(-1, -1);
-		Junction currJ = null;
-		for (int x = 0; x < gridSize; x++) {
-			for (int y = 0; y < gridSize; y++) {
-				currP.setX(x); currP.setY(y);
-				currJ = grid[currP.getX()][currP.getY()];
-				if (currJ == null) // this field does not exist or isn't yet discovered
-					continue;
-				
-				if (currJ.getType() == Junction.MASTER_OBJ &&
-					Definitions.getInstance().myName.equals(Definitions.MASTER))
-					return false;
-				else if (currJ.getType() == Junction.SLAVE_OBJ &&
-						 Definitions.getInstance().myName.equals(Definitions.SLAVE))
-					return false;
-				//else if (currJ.getType() == Junction.COMMON_OBJ)
-					//return false;
-			}
-		}
-		return true;
-	}*/
-
+	 * Returns a PathElement chain where the last ends at a junction where
+	 * a uncommon object for the given robot is. If null returned there is
+	 * no way.
+	 * @param robo the robot which will have to walk to the next uncommon object. 
+	 * @return a PathElement chain where the last ends at a junction where
+	 * a uncommon object for the given robot is. If null returned there is
+	 * no way.
+	 */
 	public PathElement getAWayToNextKnownUnCommon(Robot robo) {
 		for (int x = 0; x < GRID_SIZE; x++) {
 			for (int y = 0; y < GRID_SIZE; y++) {
@@ -217,28 +175,13 @@ public class Grid {
 		return null;
 	}
 
-	/*public PathElement getAWayToNextKnownCommon(Robot robo) {
-		for (int x = 0; x < GRID_SIZE; x++) {
-			for (int y = 0; y < GRID_SIZE; y++) {
-				if (grid[x][y].getType() == Junction.COMMON_OBJ) {		
-					boolean map[][] = getMap();
-					map[x][y] = true;	// there where we want to go must be enabled
-					
-					int orientation getOrientation(x,y);
-					BackTracker guide = new BackTracker(map);
-					PathElement path = guide.findWay(robo.getMyActualPosition(), grid[x][y].getPosition());
-					
-					if (path == null)
-						continue;
-					
-					return path;
-				}
-			}
-		}
-		return null;
-	}*/
-
-	
+	/**
+	 * Returns a PathElement chain where the last ends at an unknown junction. 
+	 * If null returned there is no way.
+	 * @param robo the robot which will have to walk to the next uncommon object. 
+	 * @return a Returns a PathElement chain where the last ends at an unknown junction. 
+	 * If null returned there is no way.
+	 */
 	public PathElement getAWayToNextUnknown(Robot robot) {
 		if (Definitions.getInstance().isMaster) {
 			for (int x = 0; x < GRID_SIZE; x++) {
@@ -258,7 +201,7 @@ public class Grid {
 					}
 				}
 			}
-		} else {
+		} else { // for optimization purposes
 			for (int x = GRID_SIZE-1; x >= 0; x--) {
 				for (int y = 0; y < GRID_SIZE; y++) {
 					if (grid[x][y].getType() == Junction.UNKNOWN) {
@@ -279,145 +222,6 @@ public class Grid {
 		}
 		return null;
 	}
-
-	/*public boolean nothingMoreToDo() {
-		Position currP = new Position(-1, -1);
-		Junction currJ = null;
-		for (int x = 0; x < gridSize; x++) {
-			for (int y = 0; y < gridSize; y++) {
-				currP.setX(x); currP.setY(y);
-				currJ = grid[currP.getX()][currP.getY()];
-				if (currJ.getType() != Junction.EMPTY ||
-					currJ.getType() != Junction.HOME_BASE ||
-					currJ.getType() != Junction.OUTSIDE) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}*/
-
-	/**
-	 * returns a way to a known object. If there is no un-common obj and 
-	 * the orientation of this is not known it will return a way to the
-	 * next unknown field. If the orientation is known
-	 * @see getAWayToNextUnknown(Robot)
-	 * @param robot used to determine the start position for the path
-	 * @return a path stored in a Vector.
-	 * /
-	public PathElement getAWayToNextKnownUncommon(Robot robot) {
-		Position currP = new Position(-1, -1);
-		Junction currJ = null;
-		BackTracker guide = new BackTracker(getMap());
-		
-		for (int x = 0; x < gridSize; x++) {
-			for (int y = 0; y < gridSize; y++) {
-				currP.setX(x); currP.setY(y);
-				currJ = grid[currP.getX()][currP.getY()];
-				if (currJ.getType() == Junction.MASTER_OBJ &&
-					Definitions.getInstance().myName.equals(Definitions.MASTER)) {
-					
-					return guide.getWay(robot.getMyActualPosition(), currP);
-				} else if (currJ.getType() == Junction.SLAVE_OBJ &&
-						   Definitions.getInstance().myName.equals(Definitions.SLAVE)) {
-					
-					return guide.getWay(robot.getMyActualPosition(), currP);
-				}/*else if (currJ.getType() == Junction.COMMON_OBJ) {
-					Direction orientation;
-					if ((orientation = getOrientation(currJ.getPosition())) == null) {
-						return getAWayToNextUnknown(robot);
-					} else {
-						return guide.getWay(robot.getMyActualJunction(), currJ.getPosition());
-					}
-				}* /
-			}
-		}
-		return null;
-	}*/
-	
-	/**
-	 * returns the orientation of the common obj at the given position
-	 * @param p the position where of the common obj of which we want to know the orientation.
-	 * @return Direction.XX if the direction is known. Else null will be returned.
-	 * @see object.Direction
-	 * /
-	private Direction getOrientation(Position p) {
-		// north
-		if (p.getY() + 1 < gridSize &&
-			getJunction(new Position(p.getX(), p.getY()+1)).getType() == Junction.COMMON_OBJ)
-			return new Direction(Direction.NORTH);
-		// west
-		else if(p.getX() - 1 >= 0 &&
-				getJunction(new Position(p.getX() - 1, p.getY())).getType() == Junction.COMMON_OBJ)
-			return new Direction(Direction.WEST);
-		// south
-		else if(p.getY() - 1 >= 0 &&
-				getJunction(new Position(p.getX(), p.getY() - 1)).getType() == Junction.COMMON_OBJ)
-			return new Direction(Direction.SOUTH);
-		// east
-		else if(p.getX() + 1 < gridSize &&
-				getJunction(new Position(p.getX() + 1, p.getY())).getType() == Junction.COMMON_OBJ)
-			return new Direction(Direction.SOUTH);
-		// unknown
-		else
-			return null;
-	}*/
-
-	/**
-	 * Returns the position of the next common object.
-	 * @return the position of the next common object.
-	 * /
-	public Position getNextCommonObj() {
-		Position currP = new Position(-1, -1);
-		Junction currJ = null;
-		
-		for (int x = 0; x < gridSize; x++) {
-			for (int y = 0; y < gridSize; y++) {
-				currP.setX(x); currP.setY(y);
-				currJ = grid[currP.getX()][currP.getY()];
-				if (currJ.getType() == Junction.COMMON_OBJ) {
-					return currP;
-				}
-			}
-		}
-		return null;
-	}*/
-	
-	/*public boolean isThereAnObjectForMe() {
-		Position currP = new Position(-1, -1);
-		Junction currJ = null;
-		
-		for (int x = 0; x < gridSize; x++) {
-			for (int y = 0; y < gridSize; y++) {
-				currP.setX(x); currP.setY(y);
-				currJ = grid[currP.getX()][currP.getY()];
-
-				if (currJ.getType() == Junction.MASTER_OBJ &&
-					Definitions.getInstance().myName.equals(Definitions.MASTER))
-					
-					return true;
-				else if (currJ.getType() == Junction.SLAVE_OBJ &&
-					     Definitions.getInstance().myName.equals(Definitions.SLAVE)) 
-					
-					return true;
-			}
-		}
-		return false;
-	}*/
-
-	/*public boolean isCommonObjOrientationKnown(Position p) {
-		if (getOrientation(p) == null)
-			return false;
-		return true;
-	}*/
-	
-	/*public Position othersPositionToHelp(Robot master) {
-		Position testP = getRelativePositionLeft(master);
-		if (getJunction(testP).getType() == Junction.COMMON_OBJ)
-			return testP;
-		else 
-			return getRelativePositionRight(master);
-	}*/
 
 	/**
 	 * Returns the theoretical left pos, the pos is not validated. Means
@@ -492,7 +296,6 @@ public class Grid {
 	private class BackTracker {
 		
 		boolean[][] map;
-		//PathElement shortest = null; 
 
 		/**
 		 * Instantiates a new BackTracker.
@@ -503,6 +306,10 @@ public class Grid {
 			this.map = map;
 		}
 		
+		/**
+		 * returns a 2D boolean array initialized with false;
+		 * @return a 2D boolean array initialized with false;
+		 */
 		public boolean[][] getEmptyWay() {
 			boolean[][] way = new boolean[GRID_SIZE][GRID_SIZE];
 			for (int x = 0; x < GRID_SIZE; x++)
@@ -511,6 +318,12 @@ public class Grid {
 			return way;
 		}
 		
+		/**
+		 * Finds a way from startP to endP, all on known, empty fields 
+		 * @param startP the position to start from
+		 * @param endP the position to end
+		 * @return
+		 */
 		public PathElement findWay(Position startP, Position endP) {
 			boolean[][] way = getEmptyWay();
 			//way[startP.getX()][startP.getY()] = true;
@@ -768,6 +581,9 @@ public class Grid {
 		}
 	}
 	
+	/**
+	 * For testing purposes only. Prints the grid in (Junction.getTypeChar) 
+	 */
 	public void printGrid() {
 		for (int y = 0; y < GRID_SIZE; y++) {
 			Console.println("");
@@ -776,6 +592,10 @@ public class Grid {
 		}
 	}
 
+	/**
+	 * Return true if there is work to do  
+	 * @return true if there is work to do
+	 */
 	public boolean isWorkToDo() {
 		for (int y = 0; y < GRID_SIZE; y++) {
 			for (int x = 0; x < GRID_SIZE; x++) {
@@ -797,6 +617,10 @@ public class Grid {
 }
 /*
  * $Log: Grid.java,v $
+ * Revision 1.13  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.12  2009/05/11 13:05:20  stollf06
  * code cleaning
  *

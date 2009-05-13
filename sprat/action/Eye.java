@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Eye.java,v 1.3 2009/05/11 13:04:52 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Eye.java,v 1.4 2009/05/13 14:51:25 mahanja Exp $
 
 package action;
 
@@ -6,6 +6,9 @@ import def.Definitions;
 import object.Junction;
 import tool.Console;
 
+/**
+ * The window to the world 
+ */
 public class Eye {
 	
 	public Eye() {
@@ -34,12 +37,14 @@ public class Eye {
 		}
 		return Junction.EMPTY;
 	}
-	
-	
 }
 
 /*
  * $Log: Eye.java,v $
+ * Revision 1.4  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.3  2009/05/11 13:04:52  stollf06
  * code cleaning
  *

@@ -1,6 +1,11 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/BrightnessRange.java,v 1.4 2009/04/27 09:56:02 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/BrightnessRange.java,v 1.5 2009/05/13 14:51:25 mahanja Exp $
 package def;
 
+/**
+ * Defines a range of brightness with a minimum and a maximum value.
+ * @author greila06
+ *
+ */
 public class BrightnessRange {
 
 	public int min = 0;
@@ -17,6 +22,10 @@ public class BrightnessRange {
 
 /**
  * $Log: BrightnessRange.java,v $
+ * Revision 1.5  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.4  2009/04/27 09:56:02  stollf06
  * added default initialisation
  *

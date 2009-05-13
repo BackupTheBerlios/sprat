@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.7 2009/05/11 13:05:20 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/def/Calibration.java,v 1.8 2009/05/13 14:51:25 mahanja Exp $
 
 package def;
 
@@ -6,6 +6,12 @@ import tool.Console;
 import lejos.nxt.Button;
 import lejos.nxt.LCD;
 
+/**
+ * Sets the values used to determine the type of a junction as well as the
+ * BrightnessRange of the line.
+ * @author greila06
+ *
+ */
 public class Calibration {
 	private  final String[] calibJunction = {"light sensor", "on junction", "then press enter to", "start the calibration"}; 
 
@@ -24,6 +30,9 @@ public class Calibration {
 	public static void main(String[] args) {
 	}
 	
+	/**
+	 * For testing purposes this class uses constant values for type-recognition.
+	 */
 	public Calibration(){
 		//Definitions def = Definitions.getInstance();
 		BrightnessRange objBR;
@@ -176,6 +185,10 @@ public class Calibration {
 }
 /*
  * $Log: Calibration.java,v $
+ * Revision 1.8  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.7  2009/05/11 13:05:20  stollf06
  * code cleaning
  *

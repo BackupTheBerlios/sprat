@@ -1,4 +1,4 @@
-// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Junction.java,v 1.4 2009/05/04 20:33:18 mahanja Exp $
+// $Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/object/Junction.java,v 1.5 2009/05/13 14:51:25 mahanja Exp $
 
 package object;
 
@@ -6,7 +6,9 @@ import def.Definitions;
 
 
 /**
- * TODO: DESCRIPTION
+ * Describes a junction of two grid lines. It is defined 
+ * by its X and Y coordinate and the type or absence of 
+ * the object on it
  * 
  * @author $Author: mahanja $
  */
@@ -38,22 +40,58 @@ public class Junction {
 		}
 	}
 	
+	/**
+	 * Sets the position of this junction
+	 * @param pos The position
+	 */
 	public void setPosition(Position pos) {
 		this.pos = pos;
 	}
 	
+	/**
+	 * Sets the type of this junciton. The parameter must
+	 * be one of the static class-member variables.
+	 * @param type one of: <br>
+	 * UNKNOWN<br> 
+	 * EMPTY<br>
+	 * MASTER_OBJ<br>
+	 * SLAVE_OBJ<br>
+	 * COMMON_OBJ<br>
+	 * OUTSIDE<br>
+	 * HOME_BASE<br>
+	 */
 	public void setType(int type) {
 		this.type = type;
 	}
 	
+	/**
+	 * Returns the position of this junction
+	 * @return the position of this junction
+	 */
 	public Position getPosition() {
 		return pos;
 	}
-	
+
+	/**
+	 * Returns the type of this junction
+	 * @return the type of this junction.
+	 * The type is one of: <br>
+	 * UNKNOWN<br> 
+	 * EMPTY<br>
+	 * MASTER_OBJ<br>
+	 * SLAVE_OBJ<br>
+	 * COMMON_OBJ<br>
+	 * OUTSIDE<br>
+	 * HOME_BASE<br>
+	 */
 	public int getType() {
 		return type;
 	}
 	
+	/**
+	 * Returns true if the given object is equal to this junction.
+	 * @param true if the given object is equal to this junction.
+	 */
 	public boolean equals(Object o) {
 		if (o instanceof Junction) {
 			Junction j = (Junction)o;
@@ -63,7 +101,9 @@ public class Junction {
 		return false;
 	}
 	
-	// debug:
+	/**
+	 * Returns a string in the format X:\<xcoordinagte\>,Y:\<ycoordinagte\>
+	 */
 	public String toString() {
 		String str = "X:"+pos.getX()+",Y:"+pos.getY();
 		
@@ -84,6 +124,12 @@ public class Junction {
 		return str;
 	}
 	
+	/**
+	 * Returns the first character of the string describing the type. 
+	 * @return the first character of the string describing the type.
+	 * This is one of: U, E, M, S, C, H. If "?" is returnded there is 
+	 * a bug in the application
+	 */
 	public String getTypeChar() {
 		if (type == UNKNOWN) {
 			return "U";
@@ -99,12 +145,16 @@ public class Junction {
 			return "H";
 		}
 		
-		return "?"; // can never occur!!!
+		return "?"; // should never occur!!!
 	}
 }
 
 /*
  * $Log: Junction.java,v $
+ * Revision 1.5  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.4  2009/05/04 20:33:18  mahanja
  * It searches a way (bug with second unknown field)
  *

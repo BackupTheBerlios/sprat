@@ -1,4 +1,4 @@
-//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.12 2009/05/11 13:04:52 stollf06 Exp $
+//$Header: /home/xubuntu/berlios_backup/github/tmp-cvs/sprat/Repository/sprat/action/Motion.java,v 1.13 2009/05/13 14:51:25 mahanja Exp $
 
 package action;
 
@@ -8,6 +8,9 @@ import object.Position;
 import object.Robot;
 import def.Definitions;
 
+/**
+ * The interface of the AI to the hardware.
+ */
 public class Motion {
     private Robot robo;
     private Grid grid;
@@ -332,6 +335,10 @@ Definitions.rightJunctAngle);
 }
 /*
  * $Log: Motion.java,v $
+ * Revision 1.13  2009/05/13 14:51:25  mahanja
+ * Last commit befor we finaly stoped the development on this project.
+ * mahanja and stollf06 say GOOD BYE!
+ *
  * Revision 1.12  2009/05/11 13:04:52  stollf06
  * code cleaning
  *
